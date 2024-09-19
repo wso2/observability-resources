@@ -1,6 +1,6 @@
 {
     "index_patterns": [
-        "wso2-integration-logs-*"
+        "wso2-integration-application-logs-*"
     ],
     "template": {
         "mappings": {
@@ -40,6 +40,9 @@
                     "type": "keyword"
                 },
                 "package": {
+                    "type": "keyword"
+                },
+                "log_type": {
                     "type": "keyword"
                 },
                 "app": {

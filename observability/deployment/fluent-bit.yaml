@@ -61,7 +61,8 @@ config:
             Match wso2_bal_logs
             Key_Name log
             Parser bal_parser
-            Reserve_Data On
+            Reserve_Data True
+            Preserve_Key True
 
         [FILTER]
             Name modify
@@ -92,7 +93,8 @@ config:
             Match wso2_mi_carbon_logs
             Key_Name log
             Parser wso2mi_carbon_parser
-            Reserve_Data On
+            Reserve_Data True
+            Preserve_Key True
 
         [FILTER]
             Name rewrite_tag

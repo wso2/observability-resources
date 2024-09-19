@@ -99,7 +99,7 @@ else
 fi
 
 # Create index template for integration logs
-URL="https://localhost:9200/_index_template/wso2_integration_log_template"
+URL="https://localhost:9200/_index_template/wso2_integration_application_log_template"
 USERNAME="admin"
 PASSWORD="admin"
 INDEX_TEMPLATE_REQUEST="dashboards/index-template-request.json"
