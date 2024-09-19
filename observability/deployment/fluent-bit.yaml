@@ -103,38 +103,14 @@ config:
         [FILTER]
             Name rewrite_tag
             Match wso2_mi_logs
-            Rule $log ^API wso2_mi_api_logs false
-            Emitter_Name re_emitted_mi_api
-
-        [FILTER]
-            Name rewrite_tag
-            Match wso2_mi_logs
-            Rule $log ^ERR wso2_mi_error_logs false
-            Emitter_Name re_emitted_mi_error
-
-        [FILTER]
-            Name rewrite_tag
-            Match wso2_mi_logs
             Rule $log ^AUDIT wso2_mi_audit_logs false
             Emitter_Name re_emitted_mi_audit
 
         [FILTER]
             Name rewrite_tag
             Match wso2_mi_logs
-            Rule $log ^ATOM wso2_mi_atom_logs false
-            Emitter_Name re_emitted_mi_atom
-
-        [FILTER]
-            Name rewrite_tag
-            Match wso2_mi_logs
             Rule $log ^CREL wso2_mi_correlation_logs false
             Emitter_Name re_emitted_mi_correlation
-
-        [FILTER]
-            Name rewrite_tag
-            Match wso2_mi_logs
-            Rule $log ^SERV wso2_mi_service_logs false
-            Emitter_Name re_emitted_mi_service
 
         [FILTER]
             Name rewrite_tag
@@ -156,7 +132,7 @@ config:
             HTTP_User admin
             Logstash_Format On
             Logstash_DateFormat %Y-%m-%d
-            Logstash_Prefix wso2-integration-logs
+            Logstash_Prefix wso2-integration-application-logs
             Match_regex ^wso2_(mi_carbon_logs|bal_logs)$
             Port 9200
             Replace_Dots On
@@ -172,7 +148,7 @@ config:
             HTTP_User admin
             Logstash_Format On
             Logstash_DateFormat %Y-%m-%d
-            Logstash_Prefix wso2-mi-http-logs
+            Logstash_Prefix wso2-integration-access-logs
             Match wso2_mi_http_logs
             Port 9200
             Replace_Dots On
@@ -188,55 +164,7 @@ config:
             HTTP_User admin
             Logstash_Format On
             Logstash_DateFormat %Y-%m-%d
-            Logstash_Prefix wso2-mi-api-logs
-            Match wso2_mi_api_logs
-            Port 9200
-            Replace_Dots On
-            Suppress_Type_Name On
-            tls On
-            tls.verify Off
-            Trace_Error On
-
-        [OUTPUT]
-            Name opensearch
-            Host opensearch-data
-            HTTP_Passwd admin
-            HTTP_User admin
-            Logstash_Format On
-            Logstash_DateFormat %Y-%m-%d
-            Logstash_Prefix wso2-mi-error-logs
-            Match wso2_mi_error_logs
-            Port 9200
-            Replace_Dots On
-            Suppress_Type_Name On
-            tls On
-            tls.verify Off
-            Trace_Error On
-
-        [OUTPUT]
-            Name opensearch
-            Host opensearch-data
-            HTTP_Passwd admin
-            HTTP_User admin
-            Logstash_Format On
-            Logstash_DateFormat %Y-%m-%d
-            Logstash_Prefix wso2-mi-atom-logs
-            Match wso2_mi_atom_logs
-            Port 9200
-            Replace_Dots On
-            Suppress_Type_Name On
-            tls On
-            tls.verify Off
-            Trace_Error On
-
-        [OUTPUT]
-            Name opensearch
-            Host opensearch-data
-            HTTP_Passwd admin
-            HTTP_User admin
-            Logstash_Format On
-            Logstash_DateFormat %Y-%m-%d
-            Logstash_Prefix wso2-mi-correlation-logs
+            Logstash_Prefix wso2-integration-correlation-logs
             Match wso2_mi_correlation_logs
             Port 9200
             Replace_Dots On
@@ -252,8 +180,8 @@ config:
             HTTP_User admin
             Logstash_Format On
             Logstash_DateFormat %Y-%m-%d
-            Logstash_Prefix wso2-mi-service-logs
-            Match wso2_mi_service_logs
+            Logstash_Prefix wso2-integration-trace-logs
+            Match wso2_mi_trace_logs
             Port 9200
             Replace_Dots On
             Suppress_Type_Name On
@@ -268,8 +196,8 @@ config:
             HTTP_User admin
             Logstash_Format On
             Logstash_DateFormat %Y-%m-%d
-            Logstash_Prefix wso2-mi-trace-logs
-            Match wso2_mi_trace_logs
+            Logstash_Prefix wso2-integration-audit-logs
+            Match wso2_mi_audit_logs
             Port 9200
             Replace_Dots On
             Suppress_Type_Name On

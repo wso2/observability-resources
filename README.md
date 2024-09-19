@@ -26,7 +26,7 @@ The following pre-requisites are required only for trying out samples.
 
 Once the pre-requisites are setup, the observability solution can be deployed by executing the provided installation script.
 
-1. Clone this repository to a local folder.
+1. Extract the wso2-observability-resources-m1.zip file to a local folder. Alternatively, clone [this](https://github.com/wso2/observability-resources) repository to a local folder.
 
 2. Naviagte to the `<local_folder>/observability-resources/observability/` folder and execute the installation script using the following command.
 ```
