@@ -83,6 +83,8 @@ kubectl port-forward svc/opensearch-data 9200:9200 -n observability &
 echo "Setting up port forwarding to OpenSearch Dashboards..."
 kubectl port-forward svc/opensearch-dashboards 5601:5601 -n observability &
 
+sleep 5
+
 # Create WSO2 integration dashboards
 URL="http://localhost:5601/api/saved_objects/_import"
 USERNAME="admin"

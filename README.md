@@ -53,6 +53,42 @@ kubectl port-forward svc/portal-svc 9100:9100
 
 3. Import `<local_folder>/observability-resources/samples/postman/WSO2_Observability.postman_collection.json` to Postman. This contains various requests that cause deployed MI and Ballerina pods to emit different log messages.
 
+Below are the interactions among sample services when invoking Postman requests.
+
+**Ballerina - Place order**\
+Multiple Ballerina services are invoked as shown below:
+![order_seq](images/order_seq.png)
+
+**Ballerina - Place order Inventory error**\
+Same as *Ballerina - Place order*, but the inventory service causes an error.
+
+**Ballerina - Place order Shipment error**\
+Same as *Ballerina - Place order*, but the shipment service causes an error.
+
+**Ballerina - Place order CRM error**\
+Same as *Ballerina - Place order*, but the CRM service causes an error.
+
+**MI - Inspection**\
+Invokes the Quality inspection service deployed in MI
+
+**MI - Inspection Error**\
+Invokes the Quality inspection service deployed in MI, but causes an error
+
+**MI - Inventory**\
+Invokes the Inventory service deployed in MI
+
+**MI - Bookstore**\
+Multiple MI and Ballerina services are invoked as shown below:
+![mi_bookstore](images/MI-bookstore.png)
+
+**Ballerina - Place order Inventory error**\
+Same as *MI - Bookstore*, but the shipment service causes an error.
+
+**Bal_MI - Place book order**\
+Multiple MI and Ballerina services are invoked as shown below:
+![bal_book_order](images/tmart-bookorder.png)
+
+
 4. In the OpenSearch dashboard, Navigate to `Dashboards -> Integration logs dashboard` to view log analytics of MI and Ballerina deployments. A logs dashboard, similar to the one shown below, will be displayed with details of MI and Ballerina logs.
 
 ![Dashboard](images/dashboard.png)
