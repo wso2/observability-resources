@@ -7,6 +7,7 @@ SHIPMENT="tmart/shipment"
 PORTAL="tmart/tmart-portal"
 MI_BOOKPARK="tomsbooks/bookpark"
 
+docker pull --platform linux/amd64  ballerina/jvm-runtime:2.0
 export DOCKER_BUILDKIT=0
 
 # Function to build a Ballerina project
@@ -19,7 +20,7 @@ build_project() {
     cd "$project_path" || exit
     
     # Run the Ballerina build command
-    bal build --cloud=k8s
+    bal build --cloud=docker
     
     # Check if the build was successful
     if [ $? -eq 0 ]; then
