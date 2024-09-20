@@ -1,4 +1,4 @@
-shipmentHost="shipments-svc"
+shipmentHost="shipments-svc:9101"
 
 [ballerina.observe]
 tracingEnabled=true

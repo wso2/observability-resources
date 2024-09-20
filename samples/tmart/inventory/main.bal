@@ -16,11 +16,14 @@ map<int> inventoryMap = {
 
 configurable string shipmentHost = "localhost";
 
+http:Client shipments = check new("http://" + shipmentHost + "/logistics");
+
 public function main() {
     log:printInfo("Starting the inventory service...");
 }
 
 service /inventory on new http:Listener(9103) {
+
     resource function get inventory() returns string[] {
         return inventoryMap.keys();
     }
@@ -34,7 +37,6 @@ service /inventory on new http:Listener(9103) {
         } else if (availableQuantity < allocation.quantity) {
             log:printInfo("Insufficient quantity in the inventory. Creating a warehouse order for item: " + allocation.itemId);
             do {
-                http:Client shipments = check new("http://" + shipmentHost + ":9101/logistics");
                 json message = check shipments->/shipments.post({orderId: allocation.orderId, address: "WH1"});
             } on fail error e {
                 log:printError("Error while creating a warehouse order for " + allocation.itemId, e);

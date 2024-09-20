@@ -92,4 +92,3 @@ metadata:
 data:
   Config.toml: |
 {{ .Files.Get "files/crm-config.toml" | indent 4 }}
-
