@@ -4,17 +4,17 @@ WSO2 observability solution provides monitoring and analytics capabilities for W
 
 ## Installation
 
-### Pre-requisites
+### Prerequisites
 
-This version of the observability solution focuses on Kubernetes-based environments, where WSO2 products and the observability solution are deployed on Kubernetes. Therefore, a Kubernetes cluster and the Helm package management system is requried for installing and working with this solution.
+This version of the observability solution focuses on Kubernetes-based environments, where WSO2 products and the observability solution are deployed on Kubernetes. Therefore, a Kubernetes cluster and the Helm package management system are required for installing and working with this solution.
 
 - **Kubernetes:**
- For trying out the solution, it is possible to setup a Kubernetes cluster locally using the [Rancher Desktop](https://docs.rancherdesktop.io/getting-started/installation) or the [Docker Desktop](https://www.docker.com/get-started/). Alternatively, any on-premise or cloud-based Kubernetes cluster such as [Azure Kubernetes Service (AKS)](https://azure.microsoft.com/en-us/products/kubernetes-service) or [Amazon Elastic Kuberntes Service (EKS)](https://aws.amazon.com/eks/) can be used.
+ For trying out the solution, it is possible to set up a Kubernetes cluster locally using the [Rancher Desktop](https://docs.rancherdesktop.io/getting-started/installation) or the [Docker Desktop](https://www.docker.com/get-started/). Alternatively, any on-premise or cloud-based Kubernetes cluster such as [Azure Kubernetes Service (AKS)](https://azure.microsoft.com/en-us/products/kubernetes-service) or [Amazon Elastic Kubernetes Service (EKS)](https://aws.amazon.com/eks/) can be used.
 
 - **Helm:**
 Rancher Desktop has Helm built-in. If not, install [Helm](https://helm.sh/docs/intro/install/)
 
-The following pre-requisites are required only for trying out samples.
+The following prerequisites are required only for trying out samples.
 
 - **Ballerina:** Install the [Ballerina programming laguage](https://ballerina.io/downloads/).
 
@@ -24,17 +24,17 @@ The following pre-requisites are required only for trying out samples.
 
 ### Deploying the observability solution
 
-Once the pre-requisites are setup, the observability solution can be deployed by executing the provided installation script.
+Once the prerequisites are setup, the observability solution can be deployed by executing the provided installation script.
 
 1. Extract the wso2-observability-resources-m1.zip file to a local folder. Alternatively, clone [this](https://github.com/wso2/observability-resources) repository to a local folder.
 
-2. Naviagte to the `<local_folder>/observability-resources/observability/` folder and execute the installation script using the following command.
+2. Navigate to the `<local_folder>/observability-resources/observability/` folder and execute the installation script using the following command.
 ```
 sh deploy-observability.sh
 ```
 3. Access the observability dashboard 
     - Log in to the OpenSearch dashboard at URL [http://localhost:5601](http://localhost:5601) using the default credentials *(username: admin, password: admin)* 
-    - Navigate to *Dashbaords* menu and click on the *Integration logs dashbaord* to view the logging dashboard.
+    - Navigate to *Dashboards* menu and click on the *Integration logs dashboard* to view the logging dashboard.
 
 ## Trying out samples
 
@@ -101,4 +101,4 @@ The architecture of the observability solution is shown below.
 
 Fluent Bit pods are deployed as a Kubernetes DaemonSet. Therefore, One Fluent Bit pod will be deployed in each VM in the Kubernetes cluster. These Fluent Bit pods capture logs emitted by all pods in their corresponding VMs and send those to OpenSearch data pods. Before sending logs, Fluent Bit pods perform some preprocessing operations such as extracting required fields, adding metadata fields, and renaming fields.
 
-OpenSearch data pods handle all data processing operations such indexing, searching, and aggregrations. OpenSearch master pods peform cluster coordination operations such as index/shard allocations and maintaining cluster's health. OpenSearch dashboards pods act as the backend for the observability dashboard. All log visualizations and dashboards are deployed into dashboard pods. 
+OpenSearch data pods handle all data processing operations such as indexing, searching, and aggregations. OpenSearch master pods perform cluster coordination operations such as index/shard allocations and maintaining the cluster's health. OpenSearch dashboard pods act as the backend for the observability dashboard. All log visualizations and dashboards are deployed into dashboard pods. 
