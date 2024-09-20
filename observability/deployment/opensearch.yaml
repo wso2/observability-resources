@@ -18,7 +18,7 @@ spec:
             opensearchDashboards.branding.applicationTitle: "WSO2 Dashboard" 
     nodePools:
         - component: master
-          replicas: 2
+          replicas: 3
           diskSize: "3Gi"
           resources:
               requests:
@@ -30,7 +30,7 @@ spec:
           roles:
               - "master"
         - component: data
-          replicas: 1
+          replicas: 2
           diskSize: "5Gi"
           resources:
               requests:
