@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bookpark
+  labels:
+    app: bookpark
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bookpark
+  template:
+    metadata:
+      labels:
+        app: bookpark
+        component: wso2mi
+    spec:
+      containers:
+      - name: bookpark-container
+        image: bookpark:1.0.3
+        ports:
+        - containerPort: 8290
+        volumeMounts:
+        - name: bookpark-config-volume
+          mountPath: /home/wso2carbon/wso2mi-4.3.0/conf/log4j2.properties
+          subPath: log4j2.properties
+          readOnly: false
+      volumes:
+      - name: bookpark-config-volume
+        configMap:
+          name: bookpark-config-map
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bookpark-svc
+spec:
+  selector:
+    app: bookpark
+  ports:
+    - protocol: TCP
+      port: 8290
+      targetPort: 8290
+  type: ClusterIP
+---
+apiVersion: "v1"
+kind: "ConfigMap"
+metadata:
+  name: "bookpark-config-map"
+data:
+  log4j2.properties: |
+{{ .Files.Get "files/log4j2.properties" | indent 4 }}
