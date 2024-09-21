@@ -32,7 +32,11 @@ Once the prerequisites are setup, the observability solution can be deployed by 
 ```
 sh deploy-observability.sh
 ```
-3. Access the observability dashboard 
+3. Access the observability dashboard
+    - Port forward 5601, which is used by the observability dashboard.
+    ```
+    kubectl port-forward svc/opensearch-dashboards 5601:5601 -n observability
+    ```
     - Log in to the OpenSearch dashboard at URL [http://localhost:5601](http://localhost:5601) using the default credentials *(username: admin, password: admin)* 
     - Navigate to *Dashboards* menu and click on the *Integration logs dashboard* to view the logging dashboard.
 
