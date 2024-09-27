@@ -7,8 +7,8 @@ base_path = "${carbon.protocol}://${carbon.host}:${carbon.management.port}"
 #discard_empty_caches = false
 server_role = "default"
 
-[http_access_log]
-enabled = true
+[n_http]
+"nhttp.is.log.rotatable" = "true"
 
 [user_store]
 type = {{ .Values.wso2.apim.configurations.userStore.type | quote }}
