@@ -42,7 +42,9 @@ sh deploy-observability.sh
 
 ## Trying out samples
 
-A set of sample Ballerina and Micro Integrator deployments are included to try out this solution. Depending on the request payload, these samples generate logs with different log levels, which can be visualized in observability dashboards.
+A set of sample Ballerina, Micro Integrator, and API Manager deployments are included to try out this solution. Depending on the request payload, these samples generate logs with different log levels, which can be visualized in observability dashboards.
+
+>**Note**: [NGINX Ingress Controller](https://kubernetes.github.io/ingress-nginx/deploy/) is required for trying out API Manager samples.
 
 1. Navigate to the `<local_folder>/observability-resources/samples` folder and execute the following command to build and deploy all samples:
 ```
@@ -91,6 +93,40 @@ Same as *MI - Bookstore*, but the shipment service causes an error.
 **Bal_MI - Place book order**\
 Multiple MI and Ballerina services are invoked as shown below:
 ![bal_book_order](images/tmart-bookorder.png)
+
+4. Access API Manager web portals and invoke pre-deployed APIs
+
+    1. Obtain the external IP (EXTERNAL-IP) of the Ingress resources by listing down the Kubernetes Ingresses.
+
+        ```bash
+        kubectl get ing -n <NAMESPACE>
+        ```
+
+        Example:
+
+        ```bash
+        NAME                                           CLASS   HOSTS                ADDRESS          PORTS     AGE
+        wso2-apim-am-all-in-one-am-gateway-ingress     nginx   gw.wso2.com          <EXTERNAL-IP>   80, 443   28h
+        wso2-apim-am-all-in-one-am-ingress             nginx   am.wso2.com          <EXTERNAL-IP>   80, 443   28h
+        wso2-apim-am-all-in-one-am-websocket-ingress   nginx   websocket.wso2.com   <EXTERNAL-IP>   80, 443   28h
+        wso2-apim-am-all-in-one-am-websub-ingress      nginx   websub.wso2.com      <EXTERNAL-IP>   80, 443   28h
+        ```
+
+    2. Add the above hosts as entries in `/etc/hosts` file as follows:
+
+        ```
+        <EXTERNAL-IP> am.wso2.com
+        <EXTERNAL-IP> gw.wso2.com
+        <EXTERNAL-IP> websub.wso2.com
+        ```
+
+    3. Try navigating to:
+
+        - `https://am.wso2.com/carbon`
+        - `https://am.wso2.com/publisher`
+        - `https://am.wso2.com/devportal`
+
+        from your favorite browser.
 
 
 4. In the OpenSearch dashboard, Navigate to `Dashboards -> Integration logs dashboard` to view log analytics of MI and Ballerina deployments. A logs dashboard, similar to the one shown below, will be displayed with details of MI and Ballerina logs.
