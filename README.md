@@ -106,10 +106,10 @@ Multiple MI and Ballerina services are invoked as shown below:
 
         ```bash
         NAME                                           CLASS   HOSTS                ADDRESS          PORTS     AGE
-        wso2-apim-am-all-in-one-am-gateway-ingress     nginx   gw.wso2.com          192.168.150.66   80, 443   28h
-        wso2-apim-am-all-in-one-am-ingress             nginx   am.wso2.com          192.168.150.66   80, 443   28h
-        wso2-apim-am-all-in-one-am-websocket-ingress   nginx   websocket.wso2.com   192.168.150.66   80, 443   28h
-        wso2-apim-am-all-in-one-am-websub-ingress      nginx   websub.wso2.com      192.168.150.66   80, 443   28h
+        wso2-apim-am-all-in-one-am-gateway-ingress     nginx   gw.wso2.com          <EXTERNAL-IP>   80, 443   28h
+        wso2-apim-am-all-in-one-am-ingress             nginx   am.wso2.com          <EXTERNAL-IP>   80, 443   28h
+        wso2-apim-am-all-in-one-am-websocket-ingress   nginx   websocket.wso2.com   <EXTERNAL-IP>   80, 443   28h
+        wso2-apim-am-all-in-one-am-websub-ingress      nginx   websub.wso2.com      <EXTERNAL-IP>   80, 443   28h
         ```
 
     2. Add the above hosts as entries in `/etc/hosts` file as follows:
