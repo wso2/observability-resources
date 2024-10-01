@@ -69,6 +69,6 @@ build_maven_project "$MI_BOOKPARK"
 
 cd "deployment" || exit
 helm upgrade --install integration-demo integration-demo
-helm upgrade --install apim-demo apim-demo/all-in-one
+# helm upgrade --install apim-demo apim-demo/all-in-one
 
 echo "All projects built and installed successfully."

@@ -18,6 +18,8 @@ spec:
       containers:
       - name: bookpark-container
         image: bookpark:1.0.3
+        args:
+        - "-DenableCorrelationLogs=true"
         ports:
         - containerPort: 8290
         volumeMounts:
@@ -41,6 +43,9 @@ spec:
     - protocol: TCP
       port: 8290
       targetPort: 8290
+    - protocol: TCP
+      port: 9164
+      targetPort: 9164
   type: ClusterIP
 ---
 apiVersion: "v1"
