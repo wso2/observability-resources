@@ -22,6 +22,7 @@ spec:
         - "-DenableCorrelationLogs=true"
         ports:
         - containerPort: 8290
+        - containerPort: 9164
         volumeMounts:
         - name: bookpark-config-volume
           mountPath: /home/wso2carbon/wso2mi-4.3.0/conf/log4j2.properties
@@ -40,10 +41,12 @@ spec:
   selector:
     app: bookpark
   ports:
-    - protocol: TCP
+    - name: http
+      protocol: TCP
       port: 8290
       targetPort: 8290
-    - protocol: TCP
+    - name: management
+      protocol: TCP
       port: 9164
       targetPort: 9164
   type: ClusterIP
