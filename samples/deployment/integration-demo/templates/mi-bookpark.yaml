@@ -18,8 +18,11 @@ spec:
       containers:
       - name: bookpark-container
         image: bookpark:1.0.3
+        args:
+        - "-DenableCorrelationLogs=true"
         ports:
         - containerPort: 8290
+        - containerPort: 9164
         volumeMounts:
         - name: bookpark-config-volume
           mountPath: /home/wso2carbon/wso2mi-4.3.0/conf/log4j2.properties
@@ -38,9 +41,14 @@ spec:
   selector:
     app: bookpark
   ports:
-    - protocol: TCP
+    - name: http
+      protocol: TCP
       port: 8290
       targetPort: 8290
+    - name: management
+      protocol: TCP
+      port: 9164
+      targetPort: 9164
   type: ClusterIP
 ---
 apiVersion: "v1"
