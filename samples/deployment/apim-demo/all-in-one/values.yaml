@@ -419,7 +419,7 @@ wso2:
         enableTokenEncryption: false
         # -- Enable token hashing
         enableTokenHashing: false
-        oauth2JWKSUrl: "https://wso2-apim-am-all-in-one-am-service:9443/oauth2/jwks"
+        oauth2JWKSUrl: "https://apim-demo-am-all-in-one-am-service:9443/oauth2/jwks"
 
       # APIM Devportal configurations
       devportal:
