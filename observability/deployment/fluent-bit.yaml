@@ -37,6 +37,7 @@ config:
             Path /var/log/containers/*.log
             Refresh_Interval 5
             Tag kube.*
+            Buffer_Max_Size 10MB
             Mem_Buf_Limit 256MB
             Skip_Long_Lines On
             Key keyfromtail
