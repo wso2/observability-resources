@@ -67,10 +67,10 @@ build_mi_project() {
 }
 
 # Build the Ballerina projects
-# build_project "$CRM"
-# build_project "$INVENTORY"
-# build_project "$SHIPMENT"
-# build_project "$PORTAL"
+build_project "$CRM"
+build_project "$INVENTORY"
+build_project "$SHIPMENT"
+build_project "$PORTAL"
 
 # Build the MI project
 build_mi_project "$MI_BOOKPARK"
