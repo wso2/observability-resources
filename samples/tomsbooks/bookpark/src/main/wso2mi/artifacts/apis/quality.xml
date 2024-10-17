@@ -4,4 +4,17 @@
         <faultSequence>
 		</faultSequence>
     </resource>
-</api>
+    <resource methods="GET" uri-template="/reports">
+        <inSequence>
+            <payloadFactory media-type="json" template-type="default">
+                <format>[ {"year": 2024, "month": 5, "report_status": "successful"}, {"year": 2024, "month": 6,
+                    "report_status": "successful"}, {"year": 2024, "month": 7, "report_status":
+                    "pending"} ]</format>
+                <args>
+                </args>
+            </payloadFactory>
+            <respond />
+        </inSequence>
+        <faultSequence>
+        </faultSequence>
+    </resource></api>

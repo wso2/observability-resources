@@ -6,65 +6,93 @@
                 <property name="Status" value="Order received" />
             </log>
             <propertyGroup>
-                <property name="orderId" expression="json-eval($.order)" scope="default" type="STRING"/>
-                <property name="customerName" expression="json-eval($.customer)" scope="default" type="STRING"/>
-                <property name="bookId" expression="json-eval($.bookId)" scope="default" type="STRING"/>
-                <property name="address" value="some address" scope="default" type="STRING"/>
+                <property name="orderId" expression="json-eval($.order)" scope="default"
+                    type="STRING" />
+                <property name="customerName" expression="json-eval($.customer)" scope="default"
+                    type="STRING" />
+                <property name="bookId" expression="json-eval($.bookId)" scope="default"
+                    type="STRING" />
+                <property name="address" value="some address" scope="default" type="STRING" />
             </propertyGroup>
 
             <!-- Call to allocate the book -->
             <payloadFactory media-type="json">
-                <format>{"book":"$1"}</format>
+                <format>
+                    {"book":"$1"}</format>
                 <args>
-                    <arg evaluator="xml" expression="get-property('bookId')"/>
+                    <arg evaluator="xml" expression="get-property('bookId')" />
                 </args>
             </payloadFactory>
             <call>
 				<endpoint>
-					<http method="POST"
-						uri-template="http://bookpark-svc:8290/binventory/allocations" />
-				</endpoint>
-			</call>
+                    <http method="POST"
+                        uri-template="http://bookpark-svc:8290/binventory/allocations" />
+                </endpoint>
+            </call>
 
 			<!-- Call to initiate shipment -->
             <payloadFactory media-type="json">
                 <format>{"orderId":"$1",
-					"address":"$2"}</format>
+                    "address":"$2"}</format>
                 <args>
-                    <arg evaluator="xml" expression="get-property('orderId')"/>
-                    <arg evaluator="xml" expression="get-property('address')"/>
-				</args>
-			</payloadFactory>
+                    <arg evaluator="xml" expression="get-property('orderId')" />
+                    <arg evaluator="xml" expression="get-property('address')" />
+                </args>
+            </payloadFactory>
             <call>
                 <endpoint>
-                    <http method="POST" uri-template="http://shipments-svc:9101/logistics/shipments"/>
-				</endpoint>
-			</call>
+                    <http method="POST" uri-template="http://shipments-svc:9101/logistics/shipments" />
+                </endpoint>
+            </call>
 
 			<!-- Construct success response -->
             <payloadFactory media-type="json">
                 <format>{"order":"$1",
-					"status":"order successful"}</format>
+                    "status":"order successful"}</format>
                 <args>
-                    <arg evaluator="xml" expression="get-property('orderId')"/>
-				</args>
-			</payloadFactory>
-            <respond/>
+                    <arg evaluator="xml" expression="get-property('orderId')" />
+                </args>
+            </payloadFactory>
+            <respond />
         </inSequence>
         
         <faultSequence>
-            <property name="HTTP_SC" value="500" scope="axis2"/>
+            <property name="HTTP_SC" value="500" scope="axis2" />
             <log category="ERROR" level="custom">
                 <property name="Status" value="Failed to place order" />
             </log>
             <payloadFactory media-type="json">
                 <format>{"order":"$1",
-					"status":"failed"}</format>
+                    "status":"failed"}</format>
                 <args>
-                    <arg evaluator="xml" expression="get-property('orderId')"/>
-				</args>
-			</payloadFactory>
-            <respond/>
+                    <arg evaluator="xml" expression="get-property('orderId')" />
+                </args>
+            </payloadFactory>
+            <respond />
+        </faultSequence>
+    </resource>
+    <resource methods="GET" uri-template="/catalog">
+        <inSequence>
+            <payloadFactory  media-type="json" template-type="default">
+                <format>{"status": "unauthorized"}</format>
+                <args></args>
+            </payloadFactory>
+            <property name="HTTP_SC" scope="axis2" type="STRING" value="401" />
+            <respond />
+        </inSequence>
+        <faultSequence>
+        </faultSequence>
+    </resource>
+    <resource methods="GET" uri-template="/outlets">
+        <inSequence>
+            <payloadFactory media-type="json" template-type="default">
+                <format>[ "Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide", "Canberra" ]</format>
+                <args>
+                </args>
+            </payloadFactory>
+            <respond />
+        </inSequence>
+        <faultSequence>
         </faultSequence>
     </resource>
 </api>

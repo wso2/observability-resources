@@ -7,14 +7,15 @@ spec:
     general:
         setVMMaxMapCount: true
         serviceName: opensearch
-        version: 2.11.1
+        version: 2.15.0
     dashboards:
         enable: true
-        version: 2.11.1
+        version: 2.15.0
         replicas: 1
         additionalConfig:
-            opensearchDashboards.branding.logo.defaultUrl: "https://raw.githubusercontent.com/chathurace/observability-resources/main/images/logo_wso2.png"
-            opensearchDashboards.branding.mark.defaultUrl: "https://raw.githubusercontent.com/chathurace/observability-resources/main/images/mark_wso2.png"
+            opensearchDashboards.branding.logo.defaultUrl: "https://raw.githubusercontent.com/chathurace/observability-resources/main/images/wso2-dashboard-logo.png"
+            opensearchDashboards.branding.mark.defaultUrl: "https://raw.githubusercontent.com/chathurace/observability-resources/main/images/wso2-dashboard-icon.png"
+            opensearchDashboards.branding.loadingLogo.defaultUrl: "https://raw.githubusercontent.com/chathurace/observability-resources/main/images/loading.png"
             opensearchDashboards.branding.applicationTitle: "WSO2 Dashboard" 
     nodePools:
         - component: master

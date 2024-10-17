@@ -71,7 +71,7 @@ fi
 
 # Deploy Data Prepper
 # echo "Deploying Data Prepper..."
-# helm install wso2-observability deployment/wso2-observability -n observability
+helm install data-prepper deployment/data-prepper -n observability
 
 echo "WSO2 observability resources deployed successfully."
 
@@ -89,7 +89,7 @@ sleep 5
 URL="http://localhost:5601/api/saved_objects/_import"
 USERNAME="admin"
 PASSWORD="admin"
-INTEGRATION_DASHBOARDS="dashboards/opensearch-artifacts.ndjson"
+INTEGRATION_DASHBOARDS="dashboards/opensearch-integration-artifacts.ndjson"
 
 curl -X POST "$URL" -u "$USERNAME:$PASSWORD" -H "osd-xsrf: true" -F file=@$INTEGRATION_DASHBOARDS --insecure
 

@@ -6,14 +6,6 @@ luaScripts:
             end
             return 1, timestamp, record
         end
-    
-    concat_fields.lua: |
-        function concat_fields(tag, timestamp, record)
-            local resource_path = (record["api_name"] or "") .. (record["resource"] or "") .. " " .. (record["method"] or "")
-            record["resource_path"] = resource_path
-            return 1, timestamp, record
-        end
-
 
 config:
     customParsers: |
@@ -34,7 +26,7 @@ config:
         [PARSER]
             Name        wso2mi_metrics_parser
             Format      regex
-            Regex       ^METRIC \[(?<time>[0-9-]{10} [0-9:,]{12})\] +INFO +\{METRICS_LOGGER\} - Response - (?<c_id>[^\|]+) \| (?<api_name>[^\|]+) \| (?<resource>[^\|]+) \| (?<method>[^\|]+) \| (?<response_time>[0-9]+) \| (?<status_code>[^\|]+)
+            Regex       ^METRIC \[(?<time>[0-9-]{10} [0-9:,]{12})\] +INFO +\{METRICS_LOGGER\} - Response - (?<c_id>[^\|]+) \| (?<api_name>[^\|]+) \| (?<resource>[^\|]+) \| (?<response_time>[0-9]+) \| (?<status_code>[^\|]+)
             Time_Key    time
             Time_Format %Y-%m-%d %H:%M:%S,%L
             Types       response_time:integer
@@ -135,12 +127,6 @@ config:
             Preserve_Key True
 
         [FILTER]
-            Name   lua
-            Match  *
-            Script /fluent-bit/scripts/concat_fields.lua
-            Call   concat_fields
-
-        [FILTER]
             Name rewrite_tag
             Match wso2_mi_logs
             Rule $log ^HTTP wso2_mi_http_logs false
@@ -223,7 +209,7 @@ config:
     outputs: |
         [OUTPUT]
             Name opensearch
-            Host opensearch-data
+            Host opensearch-cluster-master
             HTTP_Passwd admin
             HTTP_User admin
             Logstash_Format On
@@ -239,7 +225,7 @@ config:
 
         [OUTPUT]
             Name opensearch
-            Host opensearch-data
+            Host opensearch-cluster-master
             HTTP_Passwd admin
             HTTP_User admin
             Logstash_Format On
@@ -255,7 +241,7 @@ config:
 
         [OUTPUT]
             Name opensearch
-            Host opensearch-data
+            Host opensearch-cluster-master
             HTTP_Passwd admin
             HTTP_User admin
             Logstash_Format On
@@ -271,7 +257,7 @@ config:
 
         [OUTPUT]
             Name opensearch
-            Host opensearch-data
+            Host opensearch-cluster-master
             HTTP_Passwd admin
             HTTP_User admin
             Logstash_Format On
@@ -287,7 +273,7 @@ config:
 
         [OUTPUT]
             Name opensearch
-            Host opensearch-data
+            Host opensearch-cluster-master
             HTTP_Passwd admin
             HTTP_User admin
             Logstash_Format On
@@ -303,7 +289,7 @@ config:
 
         [OUTPUT]
             Name opensearch
-            Host opensearch-data
+            Host opensearch-cluster-master
             HTTP_Passwd admin
             HTTP_User admin
             Logstash_Format On
@@ -319,7 +305,7 @@ config:
 
         [OUTPUT]
             Name opensearch
-            Host opensearch-data
+            Host opensearch-cluster-master
             HTTP_Passwd admin
             HTTP_User admin
             Logstash_Format On
@@ -335,7 +321,7 @@ config:
 
         [OUTPUT]
             Name opensearch
-            Host opensearch-data
+            Host opensearch-cluster-master
             HTTP_Passwd admin
             HTTP_User admin
             Logstash_Format On
@@ -351,7 +337,7 @@ config:
 
         [OUTPUT]
             Name opensearch
-            Host opensearch-data
+            Host opensearch-cluster-master
             HTTP_Passwd admin
             HTTP_User admin
             Logstash_Format On
@@ -367,7 +353,7 @@ config:
 
         [OUTPUT]
             Name opensearch
-            Host opensearch-data
+            Host opensearch-cluster-master
             HTTP_Passwd admin
             HTTP_User admin
             Logstash_Format On
@@ -383,7 +369,7 @@ config:
 
         [OUTPUT]
             Name opensearch
-            Host opensearch-data
+            Host opensearch-cluster-master
             HTTP_Passwd admin
             HTTP_User admin
             Logstash_Format On
@@ -399,7 +385,7 @@ config:
 
         [OUTPUT]
             Name opensearch
-            Host opensearch-data
+            Host opensearch-cluster-master
             HTTP_Passwd admin
             HTTP_User admin
             Logstash_Format On
@@ -415,7 +401,7 @@ config:
 
         [OUTPUT]
             Name opensearch
-            Host opensearch-data
+            Host opensearch-cluster-master
             HTTP_Passwd admin
             HTTP_User admin
             Logstash_Format On

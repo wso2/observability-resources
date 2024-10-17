@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: bookpark-container
-        image: bookpark:1.0.3
+        image: bookpark-m:1.0.3
         args:
         - "-DenableCorrelationLogs=true"
         ports:
@@ -27,6 +27,10 @@ spec:
         - name: bookpark-config-volume
           mountPath: /home/wso2carbon/wso2mi-4.3.0/conf/log4j2.properties
           subPath: log4j2.properties
+          readOnly: false
+        - name: bookpark-config-volume
+          mountPath: /home/wso2carbon/wso2mi-4.3.0/conf/deployment.toml
+          subPath: deployment.toml
           readOnly: false
       volumes:
       - name: bookpark-config-volume
@@ -58,3 +62,5 @@ metadata:
 data:
   log4j2.properties: |
 {{ .Files.Get "files/log4j2.properties" | indent 4 }}
+  deployment.toml: |
+{{ .Files.Get "files/deployment.toml" | indent 4 }}
