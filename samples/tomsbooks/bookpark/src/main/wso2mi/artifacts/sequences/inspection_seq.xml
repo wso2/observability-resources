@@ -9,9 +9,10 @@
             <log category="ERROR" level="custom">
                 <property name="Status" value="Section s2 is not allowed" />
             </log>
-            <property name="HTTP_SC" value="500" scope="axis2" />
+            <property name="HTTP_SC" scope="axis2" type="STRING" value="500" />
             <payloadFactory media-type="json">
-                <format>{"error":"Section s2 is not allowed"}</format>
+                <format>{"error":"Section s2
+                    is not allowed"}</format>
                 <args />
             </payloadFactory>
         </then>
@@ -21,7 +22,8 @@
                 <property name="Status" value="Inspection created" />
             </log>
             <payloadFactory media-type="json" template-type="default">
-                <format>{"Status":"Inspection task created"}</format>
+                <format>{"Status":"Inspection
+                    task created"}</format>
                 <args>
                 </args>
             </payloadFactory>

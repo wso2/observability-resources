@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Define the project paths
 CRM="tmart/customers"
 INVENTORY="tmart/inventory"
 SHIPMENT="tmart/shipment"
@@ -10,7 +9,6 @@ MI_BOOKPARK="tomsbooks/bookpark"
 docker pull --platform linux/amd64  ballerina/jvm-runtime:2.0
 export DOCKER_BUILDKIT=0
 
-# Function to build a Ballerina project
 build_project() {
     local project_path=$1
     
@@ -34,8 +32,8 @@ build_project() {
     cd - > /dev/null
 }
 
-# Function to build the Maven project
-build_maven_project() {
+# Function to build the MI project
+build_mi_project() {
     local project_path=$1
     
     echo "Building MI project in $project_path"
@@ -53,6 +51,16 @@ build_maven_project() {
         echo "Maven build failed for project: $project_path"
         exit 1
     fi
+
+    # Copy the metrics logging handler to the MI image. (This is a temporary workaround)
+    cd - > /dev/null
+    cd deployment/integration-demo/extensions/metrics-handler/source || exit
+    mvn clean package
+    cd - > /dev/null
+    cp deployment/integration-demo/extensions/metrics-handler/source/target/mimetrics-1.0.0.jar deployment/integration-demo/extensions/metrics-handler/docker
+    cd deployment/integration-demo/extensions/metrics-handler/docker || exit
+    export DOCKER_DEFAULT_PLATFORM=linux/amd64
+    docker build -t bookpark-m:1.0.3 .
     
     # Navigate back to the initial directory
     cd - > /dev/null
@@ -65,9 +73,10 @@ build_project "$SHIPMENT"
 build_project "$PORTAL"
 
 # Build the MI project
-build_maven_project "$MI_BOOKPARK"
+build_mi_project "$MI_BOOKPARK"
 
 cd "deployment" || exit
+helm uninstall integration-demo
 helm upgrade --install integration-demo integration-demo
 # helm upgrade --install apim-demo apim-demo/all-in-one
 

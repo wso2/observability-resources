@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: data-prepper
-        image: opensearchproject/data-prepper:latest
+        image: opensearchproject/data-prepper:{{ .Values.dataPrepper.version }}
         ports:
         - containerPort: 8021
         - containerPort: 4317

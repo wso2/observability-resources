@@ -9,6 +9,7 @@ entry-pipeline:
         name: "raw-pipeline"
     - pipeline:
         name: "service-map-pipeline"
+    - stdout: {}
 raw-pipeline:
   source:
     pipeline:
@@ -22,7 +23,6 @@ raw-pipeline:
         password: "{{ .Values.opensearch.password }}"
         insecure: true        
         index_type: trace-analytics-raw
-    - stdout:
 service-map-pipeline:
   delay: "100"
   source:

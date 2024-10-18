@@ -1,0 +1,33 @@
+openapi: 3.0.1
+info:
+  title: bookstore
+  description: API Definition of bookstore
+  version: 1.0.0
+servers:
+- url: http://localhost:8290/store
+paths:
+  /orders:
+    post:
+      requestBody:
+        description: Sample Payload
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                payload:
+                  type: object
+        required: false
+      responses:
+        default:
+          description: Default response
+  /catalog:
+    get:
+      responses:
+        default:
+          description: Default response
+  /outlets:
+    get:
+      responses:
+        default:
+          description: Default response

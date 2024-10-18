@@ -2,3 +2,6 @@
 opensearch:
   username: "admin"
   password: "admin"
+
+dataPrepper:
+  version: "2.9.0"
