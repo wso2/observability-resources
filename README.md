@@ -26,7 +26,7 @@ The following prerequisites are required only for trying out samples.
 
 Once the prerequisites are setup, the observability solution can be deployed by executing the provided installation script.
 
-1. Extract the wso2-observability-resources-m1.zip file to a local folder. Alternatively, clone [this](https://github.com/wso2/observability-resources) repository to a local folder.
+1. Extract the wso2-observability-resources-m2.zip file to a local folder. Alternatively, clone [this](https://github.com/wso2/observability-resources) repository to a local folder.
 
 2. Navigate to the `<local_folder>/observability-resources/observability/` folder and execute the installation script using the following command.
 ```
@@ -38,11 +38,11 @@ sh deploy-observability.sh
     kubectl port-forward svc/opensearch-dashboards 5601:5601 -n observability
     ```
     - Log in to the OpenSearch dashboard at URL [http://localhost:5601](http://localhost:5601) using the default credentials *(username: admin, password: admin)* 
-    - Navigate to *Dashboards* menu and click on the *Integration logs dashboard* to view the logging dashboard.
+    - Navigate to *Dashboards* menu.  Click on the *Integration logs dashboard* or *Integration metrics dashboard* to view the required dashboard.
 
 ## Trying out samples
 
-A set of sample Ballerina, Micro Integrator, and API Manager deployments are included to try out this solution. Depending on the request payload, these samples generate logs with different log levels, which can be visualized in observability dashboards.
+A set of sample Ballerina, Micro Integrator, and API Manager deployments are included to try out this solution. Depending on the request payload, these samples generate logs, tracing data, and metrics data, which can be visualized in observability dashboards.
 
 >**Note**: [NGINX Ingress Controller](https://kubernetes.github.io/ingress-nginx/deploy/) is required for trying out API Manager samples.
 
@@ -57,7 +57,7 @@ kubectl port-forward svc/bookpark-svc 8290:8290
 kubectl port-forward svc/portal-svc 9100:9100
 ```
 
-3. Import `<local_folder>/observability-resources/samples/postman/WSO2_Observability.postman_collection.json` to Postman. This contains various requests that cause deployed MI and Ballerina pods to emit different log messages.
+3. Import `<local_folder>/observability-resources/samples/postman/WSO2_Observability.postman_collection.json` to Postman. This contains various requests that cause deployed MI and Ballerina pods to generate logs, tracing data, and metrics data.
 
 Below are the interactions among sample services when invoking Postman requests.
 
@@ -133,12 +133,22 @@ Multiple MI and Ballerina services are invoked as shown below:
 
 ![Dashboard](images/dashboard.png)
 
+5. Navigate to `Observability -> Traces` tab to view tracing data of MI and Ballerina service invocations.
+
+![Dashboard](images/trace-dashboard.png)
+
+6. Navigate to `Dashboards -> Integration metrics dashboard` to view metrics data.
+
+![Dashboard](images/metrics-dashboard.png)
+
 ## Architecture
 
 The architecture of the observability solution is shown below.
 
-![Architecture](images/observability_architecture.png)
+![Architecture](images/observability_architecture_m2.png)
 
 Fluent Bit pods are deployed as a Kubernetes DaemonSet. Therefore, One Fluent Bit pod will be deployed in each VM in the Kubernetes cluster. These Fluent Bit pods capture logs emitted by all pods in their corresponding VMs and send those to OpenSearch data pods. Before sending logs, Fluent Bit pods perform some preprocessing operations such as extracting required fields, adding metadata fields, and renaming fields.
+
+Each MI and Ballerina pod sends tracing data to Data Prepper according to the Open Telemetry format. Data Prepper performs some preprocessing operations and sends processed tracing data to OpenSearch data pods.
 
 OpenSearch data pods handle all data processing operations such as indexing, searching, and aggregations. OpenSearch master pods perform cluster coordination operations such as index/shard allocations and maintaining the cluster's health. OpenSearch dashboard pods act as the backend for the observability dashboard. All log visualizations and dashboards are deployed into dashboard pods. 
