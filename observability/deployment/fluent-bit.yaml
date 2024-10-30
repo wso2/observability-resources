@@ -25,10 +25,10 @@ config:
             Time_Format %Y-%m-%dT%H:%M:%S.%L%z
 
         [PARSER]
-            Name   wso2mi_carbon_parser
-            Format regex
-            Regex  ^(?<log_type>[A-Z]+) \[(?<time>[0-9-]{10} [0-9:,]{12})\]\s+(?<level>[A-Z]+)\s+\{(?<module>[^}]+)\}\s*(?:\[\s*Deployed From Artifact Container:\s+(?<package>[^\]]+)\s*\]\s*)?\s*(?:-\s+\{api:(?<api>[^}]+)\})?\s*(?<message>.+)
-            Time_Key   time
+            Name        wso2mi_carbon_parser
+            Format      regex
+            Regex  ^(?<log_type>[A-Z]+) \[(?<time>[0-9-]{10} [0-9:,]{12})\]\s+(?<level>[A-Z]+)\s+\{(?<module>[^}]+)\}\s*(?:\[\s*Deployed From Artifact Container:\s+(?<package>[^\]]+)\s*\]\s*)?\s*(?:-\s+\{api:(?<api>[^}]+)\})?\s*(?<message>(.|\n)+)
+            Time_Key    time
             Time_Format %Y-%m-%d %H:%M:%S,%L
 
         [PARSER]
@@ -45,6 +45,13 @@ config:
             Regex  ^(?<log_type>[A-Z]+) \[(?<time>[0-9-]{10} [0-9:,]{12})\]\s+(?<level>[A-Z]+)\s+\{(?<module>[^}]+)\}\s*(?:\[\s*Deployed From Artifact Container:\s+(?<package>[^\]]+)\s*\]\s*)?\s*(?:-\s+\{api:(?<api>[^}]+)\})?\s*(?<message>.+)
             Time_Key   time
             Time_Format %Y-%m-%d %H:%M:%S,%L
+
+        [MULTILINE_PARSER]
+            name          wso2_multiline_parser
+            type          regex
+            flush_timeout 1000
+            rule          "start_state"   "^CARBON.*"   "cont"
+            rule          "cont"          "^(?!CARBON|CREL|AUDIT|HTTP|TRACE|METRIC).*" "cont"
 
     inputs: |
         [INPUT]
@@ -73,6 +80,12 @@ config:
             Labels On
             Annotations On
             Merge_Log_Key processed
+
+        [FILTER]
+            name multiline
+            match kube.*
+            multiline.key_content log
+            multiline.parser wso2_multiline_parser
 
         [FILTER]
             Name rewrite_tag
