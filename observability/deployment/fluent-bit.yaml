@@ -14,15 +14,11 @@ luaScripts:
             return 1, timestamp, record
         end
 
-
 config:
     customParsers: |
         [PARSER]
-            Name   bal_parser
-            Format regex
-            Regex  ^time=(?<time>[^ ]+) level=(?<level>[^ ]+) module=(?<module>[^ ]+) message="(?<message>[^"]+)"(?: error="(?<error>[^"]+)")?(?: traceId="(?<traceId>[^"]+)")?(?: spanId="(?<spanId>[^"]+)")?(?<extra_fields>.*)?
-            Time_Key time
-            Time_Format %Y-%m-%dT%H:%M:%S.%L%z
+            Name        bal_parser
+            Format      logfmt
 
         [PARSER]
             Name        wso2mi_carbon_parser
