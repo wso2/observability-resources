@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Check if the DEPLOYMENT environment variable is set
+if [ -z "$DEPLOYMENT" ]; then
+  # If not set, assign it the value 'UNKNOWN'
+  export DEPLOYMENT="UNKNOWN"
+fi
+
+# Print the value of DEPLOYMENT for confirmation
+echo "DEPLOYMENT is set to: $DEPLOYMENT"
+
+# Execute the Fluent Bit command
+nohup fluent-bit -c <%= @config_path %> > <%= @deployment_dir %>/fluentbit/logs/fluentbit.log 2>&1 &
+
+echo "Fluent Bit started with config: <%= @config_path %>, logs at: <%= @deployment_dir %>/fluentbit/logs/fluentbit.log"

@@ -22,7 +22,7 @@
       "time": {
         "type": "date"
       },
-      "api": {
+      "integration": {
         "type": "keyword"
       },
       "message": {

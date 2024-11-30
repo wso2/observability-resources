@@ -1,0 +1,24 @@
+[PARSER]
+    Name        wso2bal_parser
+    Format      logfmt
+    Time_Key    time
+    Time_Keep   On
+    Types       response_time:integer
+
+[PARSER]
+    Name        wso2mi_metrics_parser
+    Format      regex
+    Regex       ^METRIC \[(?<time>[^\]]+)\] +INFO +\{METRICS_LOGGER\} - Response - (?<c_id>[^\|]+) \| (?<integration>[^\|]+) \| (?<sublevel>[^\|]+) \| (?<method>[^\|]+) \| (?<response_time>[0-9]+) \| (?<status>[^\|]+)
+    Time_Key    time
+    Time_Keep   On
+    Time_Format %Y-%m-%dT%H:%M:%S.%L%z
+    Types       response_time:integer
+
+[PARSER]
+    Name        wso2mi_carbon_parser
+    Format      regex
+    Regex       ^(?<log_type>[A-Z]+) \[(?<time>[^\]]+)\]\s+(?<level>[A-Z]+)\s+\{(?<module>[^}]+)\}\s*(?:\[\s*Deployed From Artifact Container:\s+(?<package>[^\]]+)\s*\]\s*)?\s*(?:-\s+\{api:(?<integration>[^}]+)\})?\s*(?<message>(.|\n)+)
+    Time_Key    time
+    Time_Keep   On
+    Time_Format %Y-%m-%dT%H:%M:%S.%L%z
+    

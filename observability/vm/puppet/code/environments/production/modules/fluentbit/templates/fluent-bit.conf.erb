@@ -1,0 +1,130 @@
+[SERVICE]
+    Flush        1
+    Log_Level    info
+    Daemon       off
+    Parsers_File wso2-integration-parsers.conf
+
+<% if @bal_logs_path != nil %>
+[INPUT]
+    Name tail
+    Path <%= @bal_logs_path %>
+    Refresh_Interval 5
+    Tag wso2_bal_logs
+    Buffer_Max_Size 10MB
+    Mem_Buf_Limit 256MB
+    Skip_Long_Lines On
+    Key log
+<% end %>
+
+<% if @mi_app_logs_path != nil %>
+[INPUT]
+    Name tail
+    Path <%= @mi_app_logs_path %>
+    Refresh_Interval 5
+    Tag wso2_mi_app_logs
+    Buffer_Max_Size 10MB
+    Mem_Buf_Limit 256MB
+    Skip_Long_Lines On
+    Key log
+<% end %>
+
+<% if @mi_metrics_logs_path != nil %>
+[INPUT]
+    Name tail
+    Path <%= @mi_metrics_logs_path %>
+    Refresh_Interval 5
+    Tag wso2_mi_metrics_logs
+    Buffer_Max_Size 10MB
+    Mem_Buf_Limit 256MB
+    Skip_Long_Lines On
+    Key log
+<% end %>
+
+[FILTER]
+    Name modify
+    Match wso2_bal_logs
+    Add app ${DEPLOYMENT}
+    Add product integrator
+    Add component ballerina
+
+[FILTER]
+    Name modify
+    Match wso2_mi_*
+    Add app ${DEPLOYMENT}
+    Add product integrator
+    Add component mi
+
+[FILTER]
+    Name modify
+    Match wso2_mi_metrics_logs
+    Add protocol http
+
+[FILTER]
+    Name parser
+    Match wso2_bal_logs
+    Key_Name log
+    Parser wso2bal_parser
+    Reserve_Data True
+    Preserve_Key True
+
+[FILTER]
+    Name parser
+    Match wso2_mi_app_logs
+    Key_Name log
+    Parser wso2mi_carbon_parser
+    Reserve_Data True
+    Preserve_Key True
+
+[FILTER]
+    Name parser
+    Match wso2_mi_metrics_logs
+    Key_Name log
+    Parser wso2mi_metrics_parser
+    Reserve_Data True
+    Preserve_Key True
+
+[FILTER]
+    Name rewrite_tag
+    Match wso2_bal_logs
+    Rule $log_type metrics wso2_bal_metrics_logs false
+    Emitter_Name re_emitted_wso2
+
+[OUTPUT]
+    Name stdout
+    Match *
+
+<% if @opensearch_host != nil %>
+
+[OUTPUT]
+    Name opensearch
+    Host <%= @opensearch_host %>
+    HTTP_Passwd <%= @opensearch_password %>
+    HTTP_User <%= @opensearch_user %>
+    Logstash_Format On
+    Logstash_DateFormat %Y-%m-%d
+    Logstash_Prefix wso2-integration-metrics-logs
+    Match_regex ^wso2_(bal|mi)_metrics_logs$
+    Port <%= @opensearch_port %>
+    Replace_Dots On
+    Suppress_Type_Name On
+    tls On
+    tls.verify Off
+    Trace_Error On
+
+[OUTPUT]
+    Name opensearch
+    Host <%= @opensearch_host %>
+    HTTP_Passwd <%= @opensearch_password %>
+    HTTP_User <%= @opensearch_user %>
+    Logstash_Format On
+    Logstash_DateFormat %Y-%m-%d
+    Logstash_Prefix wso2-integration-application-logs
+    Match_regex ^wso2_(bal_logs|mi_app_logs)$
+    Port <%= @opensearch_port %>
+    Replace_Dots On
+    Suppress_Type_Name On
+    tls On
+    tls.verify Off
+    Trace_Error On
+
+<% end %>

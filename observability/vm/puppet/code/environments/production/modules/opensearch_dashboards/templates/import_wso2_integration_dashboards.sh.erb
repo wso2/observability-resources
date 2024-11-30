@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# Configuration
+OSD_HEALTH_ENDPOINT="http://localhost:5601/api/status" # This is run from the same host as OSD
+AUTH="admin:<%= @admin_password %>"
+MAX_RETRIES=120     
+RETRY_INTERVAL=3   
+
+OSD_APP_INDEX_TEMPLATE_ENDPOINT="https://localhost:9200/_index_template/wso2_integration_application_log_template" # This is run from the same host as OSD
+APP_INDEX_TEMPLATE_REQUEST="<%= @deployment_dir %>/opensearch-dashboards/wso2/wso2-integration-app-index-template-request.json"
+
+OSD_METRICS_INDEX_TEMPLATE_ENDPOINT="https://localhost:9200/_index_template/wso2_integration_metrics_log_template" # This is run from the same host as OSD
+METRICS_INDEX_TEMPLATE_REQUEST="<%= @deployment_dir %>/opensearch-dashboards/wso2/wso2-integration-metrics-index-template-request.json"
+
+OSD_IMPORT_ENDPOINT="http://localhost:5601/api/saved_objects/_import" # This is run from the same host as OSD
+INTEGRATION_DASHBOARDS="<%= @deployment_dir %>/opensearch-dashboards/wso2/wso2-integration-dashboards-vm.ndjson"
+
+# Function to check if OpenSearch Dashboards is ready
+check_osd_ready() {
+  curl -s -u "$AUTH" "$OSD_HEALTH_ENDPOINT" | grep -q '"state":"green"'
+}
+
+# Wait for OpenSearch Dashboards
+echo "Waiting for OpenSearch Dashboards to start..."
+for i in $(seq 1 $MAX_RETRIES); do
+  if check_osd_ready; then
+    echo "OpenSearch Dashboards is ready."
+    echo "Executing the curl command to create integration app log index templates..."
+    curl -X PUT "$OSD_APP_INDEX_TEMPLATE_ENDPOINT" -u "$AUTH" -H "Content-Type: application/json" -d "@$APP_INDEX_TEMPLATE_REQUEST" --insecure
+
+    # echo "Executing the curl command to create integration metrics log index templates..."
+    # curl -X PUT "$OSD_METRICS_INDEX_TEMPLATE_ENDPOINT" -u "$AUTH" -H "Content-Type: application/json" -d "@$METRICS_INDEX_TEMPLATE_REQUEST" --insecure
+
+    echo "Executing the curl command to import integration dashboards..."
+    curl -X POST "$OSD_IMPORT_ENDPOINT" -u "$AUTH" -H "osd-xsrf: true" -F file=@$INTEGRATION_DASHBOARDS --insecure
+    exit 0
+  else
+    echo "OSD not ready yet... retrying in $RETRY_INTERVAL seconds."
+    sleep $RETRY_INTERVAL
+  fi
+done
+
+echo "Error: OpenSearch Dashboards did not start within the expected time."
+exit
