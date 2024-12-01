@@ -3,6 +3,7 @@
 # Copyright OpenSearch Contributors
 # SPDX-License-Identifier: Apache-2.0
 
+export OPENSEARCH_INITIAL_ADMIN_PASSWORD='<%= @opensearch_admin_password %>'
 export OPENSEARCH_HOME=`dirname $(realpath $0)`
 export OPENSEARCH_PATH_CONF=$OPENSEARCH_HOME/config
 cd $OPENSEARCH_HOME

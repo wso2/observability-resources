@@ -1,22 +1,26 @@
 # Class: fluentbit
 class fluentbit inherits fluentbit::params {
 
-  if $os == 'Linux' {
+  include o11y_common
+
+  if $os == 'Debian' {
     exec { 'install fluent-bit':
       command => 'apt install -y fluent-bit',
-      path    => ['/usr/local/bin', '/usr/bin', '/bin'],
+      path    => $path,
       unless  => 'fluent-bit --version | grep "Fluent Bit"',
     }
   }
 
-  # exec { 'install_fluentbit':
-  #   command => 'brew install fluent-bit@3.1.10',
-  #   path    => ['/usr/local/bin', '/usr/bin', '/bin'],
-  #   require => Exec['brew_tap_fluentbit'],
-  #   unless  => '/usr/local/bin/fluent-bit --version | grep "Fluent Bit v3.1.10"',
-  # }
+  if $os == 'Darwin' {
+    exec { 'install fluent-bit':
+      command => 'brew install fluent-bit',
+      path    => $facts['path'],
+      unless  => 'fluent-bit --version | grep "Fluent Bit"',
+    }
+  }
 
-  file { "${deployment_dir}/fluentbit":
+  file { 'create fluentbit directory':
+    path   => "${deployment_dir}/fluentbit",
     ensure => directory,
     owner  => $deploy_user,
     group  => $deploy_group,

@@ -1,5 +1,6 @@
 class sample_bal_shipment inherits sample_bal_shipment::params {
 
+  include common
   include common::java
 
   file { $samples_dir:
@@ -23,7 +24,7 @@ class sample_bal_shipment inherits sample_bal_shipment::params {
     mode   => '0755',
   }
 
-  file { "${sales_app_dir}/shipments.jar":
+  file { "${shipment_app_dir}/shipments.jar":
     ensure  => file,
     source  => 'puppet:///modules/sample_bal_shipment/shipments.jar',
     owner   => $deploy_user,
@@ -32,7 +33,7 @@ class sample_bal_shipment inherits sample_bal_shipment::params {
   }
 
   exec { 'run_bal_sales_sample':
-    command   => "nohup java -jar ${sales_app_dir}/shipments.jar > ${sales_app_logs_dir}/app.log 2>&1 &",
+    command   => "nohup java -jar ${shipment_app_dir}/shipments.jar > ${shipment_app_logs_dir}/app.log 2>&1 &",
     path      => ['/bin', '/usr/bin'],
   }
 

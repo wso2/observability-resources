@@ -1,5 +1,6 @@
 class sample_mi inherits sample_mi::params {
 
+  include common
   include common::java
 
   file { 'creae_mi_base_dir':

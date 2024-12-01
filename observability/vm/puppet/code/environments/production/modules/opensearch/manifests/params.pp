@@ -1,4 +1,4 @@
-class opensearch::params inherits common::params {
+class opensearch::params inherits o11y_common::params {
 
   # JDK Distributions
   $java_dir = "/opt"
@@ -10,5 +10,5 @@ class opensearch::params inherits common::params {
   $opensearch_version = '2.15.0'
   $opensearch_download_url = "https://artifacts.opensearch.org/releases/bundle/opensearch/${opensearch_version}/opensearch-${opensearch_version}-linux-${cpu}.tar.gz"
   $opensearch_dir = "${deployment_dir}/opensearch/opensearch-${opensearch_version}"
-  $admin_password = 'Observer_123'
+  $opensearch_admin_password = 'Observer_123'
 }

@@ -1,4 +1,4 @@
-class common::java inherits common::params {
+class o11y_common::java inherits o11y_common::params {
 
 # Check if Java is installed by running `java --version`
 $java_installed = inline_template('<%=`java --version 2>&1`.empty? ? false : true %>')
