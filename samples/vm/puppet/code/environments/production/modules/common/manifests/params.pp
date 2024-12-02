@@ -1,5 +1,7 @@
 class common::params {
 
+  $o11y_tracing = false
+
   # JDK Distributions
   $java_dir = "/opt"
   $java_symlink = "/usr/bin/java"

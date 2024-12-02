@@ -5,7 +5,7 @@
 
 [ballerina]
 dependencies-toml-version = "2"
-distribution-version = "2201.10.0"
+distribution-version = "2201.10.3"
 
 [[package]]
 org = "ballerina"
@@ -28,14 +28,6 @@ dependencies = [
 	{org = "ballerina", name = "jballerina.java"},
 	{org = "ballerina", name = "task"},
 	{org = "ballerina", name = "time"}
-]
-
-[[package]]
-org = "ballerina"
-name = "cloud"
-version = "3.1.0"
-modules = [
-	{org = "ballerina", packageName = "cloud", moduleName = "cloud"}
 ]
 
 [[package]]
@@ -69,7 +61,7 @@ dependencies = [
 [[package]]
 org = "ballerina"
 name = "http"
-version = "2.12.1"
+version = "2.12.3"
 dependencies = [
 	{org = "ballerina", name = "auth"},
 	{org = "ballerina", name = "cache"},
@@ -308,16 +300,15 @@ modules = [
 
 [[package]]
 org = "tmart"
-name = "crm"
+name = "portal"
 version = "0.1.0"
 dependencies = [
-	{org = "ballerina", name = "cloud"},
 	{org = "ballerina", name = "http"},
 	{org = "ballerina", name = "log"},
 	{org = "ballerinai", name = "observe"},
 	{org = "ballerinax", name = "jaeger"}
 ]
 modules = [
-	{org = "tmart", packageName = "crm", moduleName = "crm"}
+	{org = "tmart", packageName = "portal", moduleName = "portal"}
 ]
 
