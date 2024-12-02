@@ -50,14 +50,14 @@ build_mi_project() {
         exit 1
     fi
 
-    cp target/bookpark-*.car puppet/code/environments/production/modules/sample_mi/files
+    cd - > /dev/null
+    cp $project_path/target/bookpark_*.car puppet/code/environments/production/modules/sample_mi/files
 
     # Copy the metrics logging handler to the MI pupper location. (This is a temporary workaround)
-    cd - > /dev/null
     cd ../deployment/integration-demo/extensions/metrics-handler/source || exit
     mvn clean package
     cd - > /dev/null
-    cp deployment/integration-demo/extensions/metrics-handler/source/target/mimetrics-*.jar puppet/code/environments/production/modules/sample_mi/files
+    cp ../deployment/integration-demo/extensions/metrics-handler/source/target/mimetrics-*.jar puppet/code/environments/production/modules/sample_mi/files
     
     # Navigate back to the initial directory
     cd - > /dev/null
@@ -70,5 +70,6 @@ done
 
 # Build the MI project
 build_mi_project "$MI_BOOKPARK"
+cp ../../files/wso2mi-*.zip puppet/code/environments/production/modules/sample_mi/files
 
 echo "All projects built and installed successfully."

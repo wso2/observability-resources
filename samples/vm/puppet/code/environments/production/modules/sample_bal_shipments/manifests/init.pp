@@ -27,7 +27,7 @@ class sample_bal_shipments inherits sample_bal_shipments::params {
   file {'copy_Config.toml':
     path   => "${shipment_app_dir}/Config.toml",
     ensure => file,
-    source => template('sample_bal_shipments/Config.toml.erb'),
+    content => template('sample_bal_shipments/Config.toml.erb'),
     owner  => $deploy_user,
     group  => $deploy_group,
     mode   => '0644',

@@ -11,14 +11,20 @@ class sample_mi inherits sample_mi::params {
     mode   => '0755',
   }
 
-  archive { 'extract_mi_product_archive_from_puppet':
-    path         => "${deployment_dir}/temp/wso2mi-${mi_version}.zip",
-    ensure       => present,
-    source       => "puppet:///modules/sample_mi/wso2mi-${mi_version}.zip",
-    extract      => true,
-    extract_path => "${deployment_dir}/mi",
-    creates      => $mi_dir,
-    cleanup      => true,
+  file { 'get_mi_zip':
+    path    => "${deployment_dir}/mi/wso2mi-${mi_version}.zip",
+    ensure  => file,
+    source  => "puppet:///modules/sample_mi/wso2mi-${mi_version}.zip",
+    owner   => $deploy_user,
+    group   => $deploy_group,
+    mode    => '0755',
+  }
+
+  exec { "unpack_mi_zip":
+    command => "unzip ${deployment_dir}/mi/wso2mi-${mi_version}.zip",
+    path    => $path,
+    cwd     => "${deployment_dir}/mi",
+    user    => $deploy_user,
   }
 
   file { 'copy the metrics handler':

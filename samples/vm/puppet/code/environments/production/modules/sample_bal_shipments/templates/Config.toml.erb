@@ -1,4 +1,4 @@
-if $o11y_tracing {
+<% if @o11y_tracing == true %>
 [ballerina.observe]
 tracingEnabled=true
 tracingProvider="jaeger"
@@ -10,4 +10,4 @@ samplerType="const"
 samplerParam=1.0
 reporterFlushInterval=2000
 reporterBufferSize=1000
-}
+<% end %>
