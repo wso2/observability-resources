@@ -9,7 +9,7 @@ if ! $java_installed {
   if $pack_location == "local" {
     file { "jdk-distribution":
       path   => "${java_home}.tar.gz",
-      source => "puppet:///modules/${module_name}/jdk/${jdk_name}.tar.gz",
+      source => "puppet:///modules/${module_name}/${jdk_name}.tar.gz",
       notify => Exec["unpack-jdk"],
     }
   }

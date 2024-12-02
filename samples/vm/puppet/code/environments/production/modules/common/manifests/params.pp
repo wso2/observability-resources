@@ -5,7 +5,8 @@ class common::params {
   # JDK Distributions
   $java_dir = "/opt"
   $java_symlink = "/usr/bin/java"
-  $jdk_name = 'amazon-corretto-17.0.6.10.1-linux-x64'
+  # $jdk_name = 'amazon-corretto-17.0.6.10.1-linux-x64'
+  $jdk_name = 'openjdk-17.0.2_linux-x64_bin'
   $java_home = "${java_dir}/${jdk_name}"
 
 

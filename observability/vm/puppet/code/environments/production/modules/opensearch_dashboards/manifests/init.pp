@@ -1,5 +1,6 @@
 class opensearch_dashboards inherits opensearch_dashboards::params
 {
+  include o11y_common
 
   file { "${deployment_dir}/opensearch-dashboards":
     ensure => directory,
