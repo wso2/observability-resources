@@ -26,7 +26,7 @@ if [ "$1" == "prepare" ]; then
     echo "Observability puppet artifacts are ready for deployment."
 fi
 
-if [ "$1" == "install" ]; then
+if [ "$1" == "local" ]; then
     cd puppet/code
 
     export FACTER_profile=opensearch
