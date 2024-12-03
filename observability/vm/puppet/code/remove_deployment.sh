@@ -13,7 +13,7 @@
 # ================================================
 
 # Base deployment directory
-DEPLOYMENT_DIR="/Users/chathura/work/programs/opensearch/envs/env4/deployment"
+DEPLOYMENT_DIR="/Users/chathura/wso2_observability"
 
 # Ports to kill processes on
 PORTS=(8290 9101 5601 9200)

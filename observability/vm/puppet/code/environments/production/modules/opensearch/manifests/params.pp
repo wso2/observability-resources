@@ -7,6 +7,7 @@ class opensearch::params inherits o11y_common::params {
   $java_home = "${java_dir}/${jdk_name}"
 
   $deployment_mode = 'single_node'
+  $opensearch_host = 'localhost'
   $opensearch_version = '2.15.0'
   $opensearch_download_url = "https://artifacts.opensearch.org/releases/bundle/opensearch/${opensearch_version}/opensearch-${opensearch_version}-linux-${cpu}.tar.gz"
   $opensearch_dir = "${deployment_dir}/opensearch/opensearch-${opensearch_version}"

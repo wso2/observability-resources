@@ -52,7 +52,7 @@
 #
 # Set the bind address to a specific IP (IPv4 or IPv6):
 #
-#network.host: 192.168.0.1
+network.host: <%= @opensearch_host %>
 #
 # Set a custom port for HTTP:
 #
@@ -75,7 +75,6 @@
 
 <% if @deployment_mode == 'single_node' %>
 discovery.type: single-node
-plugins.security.disabled: true
 <% end %>
 #
 # ---------------------------------- Gateway -----------------------------------

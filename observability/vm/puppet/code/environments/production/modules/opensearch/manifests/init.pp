@@ -75,6 +75,14 @@ if $pack_location == "local" {
     unless      => 'pgrep -f "opensearch --securityadmin"',
   }
 
+  file { "${opensearch_dir}/config/opensearch.yml":
+    ensure  => file,
+    content => template('opensearch/opensearch.yml.erb'),
+    owner   => $deploy_user,
+    group   => $deploy_group,
+    mode    => '0755',
+  }
+
 if $os == 'Debian' {
 
   file { 'copy_opensearch_service':
