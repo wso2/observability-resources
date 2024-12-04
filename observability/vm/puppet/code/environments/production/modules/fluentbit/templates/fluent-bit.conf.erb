@@ -4,16 +4,19 @@
     Daemon       off
     Parsers_File wso2-integration-parsers.conf
 
-<% if @bal_logs_path != nil %>
+<% if @bal_log_paths != nil %>
+<% @bal_log_paths.each do |bal_log_path| -%>
 [INPUT]
     Name tail
-    Path <%= @bal_logs_path %>
+    Path <%= bal_log_path %>
     Refresh_Interval 5
     Tag wso2_bal_logs
     Buffer_Max_Size 10MB
     Mem_Buf_Limit 256MB
     Skip_Long_Lines On
     Key log
+    
+<% end -%>
 <% end %>
 
 <% if @mi_app_logs_path != nil %>

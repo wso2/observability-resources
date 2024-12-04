@@ -1,5 +1,9 @@
 class data_prepper inherits data_prepper::params {
 
+if $o11y_tracing == false {
+  return()
+}
+
 if $os == 'Debian' {
   include docker_compose
 }

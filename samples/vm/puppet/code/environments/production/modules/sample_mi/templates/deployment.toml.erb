@@ -22,11 +22,13 @@ flow.statistics.capture_all= true
 stat.tracer.collect_payloads= true
 stat.tracer.collect_mediation_properties= true
 
+<% if @o11y_tracing == true %>
 [opentelemetry]
 enable = true
 logs = true
 type = "otlp"
-url = "http://data-prepper.observability.svc.cluster.local:4317"
+url = "http://<%= @data_prepper_host %>:4317"
+<% end %>
 
 [[opentelemetry.properties]]
 name = "api-key"

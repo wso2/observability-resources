@@ -5,6 +5,8 @@ class o11y_common::params {
   $path = $facts['path']
   $pack_location = 'local'
 
+  $o11y_tracing = true
+
 if $os == 'Darwin' {
   $user_id = $facts['identity']['uid']
   $user_group_id = $facts['identity']['gid']

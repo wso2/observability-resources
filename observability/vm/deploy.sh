@@ -38,5 +38,8 @@ if [ "$1" == "local" ]; then
     export FACTER_profile=fluentbit
     puppet apply --environmentpath=environments --environment=production environments/production/manifests/site.pp
 
+    export FACTER_profile=data_prepper
+    puppet apply --environmentpath=environments --environment=production environments/production/manifests/site.pp
+
     echo "Observability solution deployed successfully."
 fi

@@ -16,16 +16,12 @@
 DEPLOYMENT_DIR="/Users/chathura/wso2_observability"
 
 # Ports to kill processes on
-PORTS=(8290 9101 5601 9200)
+PORTS=(8290 9101 9103)
 
 # Directories to delete relative to DEPLOYMENT_DIR
 SUBDIRS=(
+    "bal_apps"
     "mi"
-    "samples"
-    "fluentbit"
-    "opensearch"
-    "opensearch-dashboards"
-    # Add more subdirectories here
 )
 
 # ================================================
@@ -84,7 +80,7 @@ kill_fluent_bit() {
     log "Attempting to find and kill Fluent Bit process..."
 
     # Define the search pattern
-    SEARCH_PATTERN="fluent-bit -c /Users/chathura/work/programs/opensearch/envs/env4/deployment/fluentbit/config.toml"
+    SEARCH_PATTERN="fluent-bit -c /Users/chathura/wso2_observability/fluentbit/wso2-integration.conf"
 
     log "Searching for process matching the pattern:"
 

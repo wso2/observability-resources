@@ -1,6 +1,7 @@
 class common::params {
 
-  $o11y_tracing = false
+  $o11y_tracing = true
+  $data_prepper_host = 'localhost'
 
   # JDK Distributions
   $java_dir = "/opt"

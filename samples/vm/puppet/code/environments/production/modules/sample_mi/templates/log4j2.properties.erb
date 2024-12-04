@@ -440,8 +440,10 @@ logger.PassThroughAccess.additivity = false
 
 logger.trace-messages.name = trace.messages
 logger.trace-messages.level = TRACE
+<% if @trace_log_enabled == true %>
 logger.trace-messages.appenderRef.CARBON_TRACE_LOGFILE.ref = CARBON_TRACE_LOGFILE
 logger.trace-messages.appenderRef.CARBON_TRACE_CONSOLE.ref = CARBON_TRACE_CONSOLE
+<% end %>
 
 logger.org-apache-coyote.name = org.apache.coyote
 logger.org-apache-coyote.level = WARN

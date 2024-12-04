@@ -4,4 +4,6 @@ class sample_mi::params inherits common::params {
   $bookpark_version = "1.0.3"
 
   $mi_dir = "${deployment_dir}/mi/wso2mi-${mi_version}"
+
+  $trace_log_enabled = false
 }

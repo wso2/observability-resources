@@ -203,6 +203,9 @@ if [ "$1" == "local" ]; then
     export FACTER_profile=sample_bal_shipments
     puppet apply --environmentpath=environments --environment=production -v environments/production/manifests/site.pp
 
+    export FACTER_profile=sample_bal_inventory
+    puppet apply --environmentpath=environments --environment=production -v environments/production/manifests/site.pp
+
     export FACTER_profile=sample_mi
     puppet apply --environmentpath=environments --environment=production -v environments/production/manifests/site.pp
 
