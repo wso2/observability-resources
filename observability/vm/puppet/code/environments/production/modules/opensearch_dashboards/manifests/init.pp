@@ -16,6 +16,7 @@ class opensearch_dashboards inherits opensearch_dashboards::params
     mode   => '0755',
   }
 
+if $pack_location == "local" {
   archive { "${deployment_dir}/temp/opensearch-dashboards-${opensearch_version}-linux-${cpu}.tar.gz":
     ensure       => present,
     source       => "puppet:///modules/opensearch_dashboards/opensearch-dashboards-${opensearch_version}-linux-${cpu}.tar.gz",
@@ -24,7 +25,7 @@ class opensearch_dashboards inherits opensearch_dashboards::params
     creates      => $opensearch_dashboards_dir,
     cleanup      => true,
   }
-
+} elsif $pack_location == "remote" {
   archive { 'download_opensearch_dashboards_if_not_available_in_puppet':
     path         => "${deployment_dir}/temp_http/opensearch-dashboards-${opensearch_version}-linux-${cpu}.tar.gz",
     ensure       => present,
@@ -34,6 +35,7 @@ class opensearch_dashboards inherits opensearch_dashboards::params
     creates      => $opensearch_dashboards_dir,
     cleanup      => true,
   }
+}
 
 if $os == 'Darwin' {
 

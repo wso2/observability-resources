@@ -1,5 +1,12 @@
 #!/bin/bash
 
+if [ $# -eq 0 ]; then
+    echo "Usage:"
+    echo "sh deploy.sh prepare: Prepare the sample puppet artifacts for deployment."
+    echo "sh deploy.sh local: Deploy the samples locally."
+    exit 1
+fi
+
 # Exit immediately if a command exits with a non-zero status
 set -e
 
@@ -120,11 +127,11 @@ fi
 #!/bin/bash
 
 BAL_PROJECTS=("crm" "inventory" "shipments" "portal")
-MI_BOOKPARK="../tomsbooks/bookpark"
+MI_BOOKPARK="../source/tomsbooks/bookpark"
 
 build_project() {
     local project_name=$1
-    local project_path="../tmart/$project_name"
+    local project_path="../source/tmart/$project_name"
     local puppet_path="$(pwd)/puppet/code/environments/production/modules/sample_bal_$project_name/files"
     
     echo "Building Ballerina project in $project_path"
@@ -173,10 +180,10 @@ build_mi_project() {
     cp $project_path/target/bookpark_*.car puppet/code/environments/production/modules/sample_mi/files
 
     # Copy the metrics logging handler to the MI pupper location. (This is a temporary workaround)
-    cd ../deployment/integration-demo/extensions/metrics-handler/source || exit
+    cd ../source/extensions/metrics-handler/source || exit
     mvn clean package
     cd - > /dev/null
-    cp ../deployment/integration-demo/extensions/metrics-handler/source/target/mimetrics-*.jar puppet/code/environments/production/modules/sample_mi/files
+    cp ../source/extensions/metrics-handler/source/target/mimetrics-*.jar puppet/code/environments/production/modules/sample_mi/files
     
     # Navigate back to the initial directory
     cd - > /dev/null

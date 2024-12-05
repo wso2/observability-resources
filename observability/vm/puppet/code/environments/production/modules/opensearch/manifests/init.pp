@@ -32,20 +32,8 @@ if $pack_location == "local" {
     path    => $path,
     cwd     => "${deployment_dir}/opensearch",
     user    => $deploy_user,
-    # onlyif  => "/usr/bin/test ! -d ${java_home}",
+    onlyif  => "test ! -d ${opensearch_dir}",
   }
-
-  # archive { 'extract_opensearch_archive_from_puppet':
-  #   path         => "${deployment_dir}/temp/opensearch-${opensearch_version}-linux-${cpu}.tar.gz",
-  #   ensure       => present,
-  #   source       => "puppet:///modules/opensearch/opensearch-${opensearch_version}-linux-${cpu}.tar.gz",
-  #   extract      => true,
-  #   extract_path => "${deployment_dir}/opensearch",
-  #   creates      => $opensearch_dir,
-  #   # cleanup      => true,
-  #   user         => $deploy_user,
-  #   group        => $deploy_group,
-  # }
 } elsif $pack_location == "remote" {
   archive { 'download_opensearch_if_not_available_in_puppet':
     path         => "${deployment_dir}/temp_http/opensearch-${opensearch_version}-linux-${cpu}.tar.gz",
@@ -72,7 +60,8 @@ if $pack_location == "local" {
     path        => ['/bin', '/usr/bin'],
     environment => ["OPENSEARCH_INITIAL_ADMIN_PASSWORD=${opensearch_admin_password}"],
     user        => $deploy_user,
-    unless      => 'pgrep -f "opensearch --securityadmin"',
+    subscribe   => File['copy_install_script'],
+    refreshonly => true,
   }
 
   file { "${opensearch_dir}/config/opensearch.yml":

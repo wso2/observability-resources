@@ -1,3 +1,11 @@
+if [ $# -eq 0 ]; then
+    echo "Usage:"
+    echo "sh deploy.sh download: Download the required artifacts. Artifacts will be downloaded to the 'observability-resources/files' directory."
+    echo "sh deploy.sh prepare: Prepare the puppet artifacts for deployment."
+    echo "sh deploy.sh local: Deploy the observability solution locally."
+    exit 1
+fi
+
 if [ "$1" == "download" ]; then
     cd ../../files
     wget https://download.java.net/java/GA/jdk17.0.2/dfd4a8d0985749f896bed50d7138ee7f/8/GPL/openjdk-17.0.2_linux-x64_bin.tar.gz

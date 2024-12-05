@@ -1,10 +1,10 @@
 #!/bin/bash
 
-CRM="tmart/customers"
-INVENTORY="tmart/inventory"
-SHIPMENT="tmart/shipment"
-PORTAL="tmart/tmart-portal"
-MI_BOOKPARK="tomsbooks/bookpark"
+CRM="../source/tmart/customers"
+INVENTORY="../source/tmart/inventory"
+SHIPMENT="../source/tmart/shipment"
+PORTAL="../source/tmart/tmart-portal"
+MI_BOOKPARK="../source/tomsbooks/bookpark"
 
 docker pull --platform linux/amd64  ballerina/jvm-runtime:2.0
 export DOCKER_BUILDKIT=0
@@ -54,11 +54,11 @@ build_mi_project() {
 
     # Copy the metrics logging handler to the MI image. (This is a temporary workaround)
     cd - > /dev/null
-    cd deployment/integration-demo/extensions/metrics-handler/source || exit
+    cd integration-demo/extensions/metrics-handler/source || exit
     mvn clean package
     cd - > /dev/null
-    cp deployment/integration-demo/extensions/metrics-handler/source/target/mimetrics-1.0.0.jar deployment/integration-demo/extensions/metrics-handler/docker
-    cd deployment/integration-demo/extensions/metrics-handler/docker || exit
+    cp integration-demo/extensions/metrics-handler/source/target/mimetrics-1.0.0.jar integration-demo/extensions/metrics-handler/docker
+    cd integration-demo/extensions/metrics-handler/docker || exit
     export DOCKER_DEFAULT_PLATFORM=linux/amd64
     docker build -t bookpark-m:1.0.3 .
     
@@ -75,7 +75,7 @@ build_project "$PORTAL"
 # Build the MI project
 build_mi_project "$MI_BOOKPARK"
 
-cd "deployment" || exit
+# cd "deployment" || exit
 helm uninstall integration-demo
 helm upgrade --install integration-demo integration-demo
 # helm upgrade --install apim-demo apim-demo/all-in-one

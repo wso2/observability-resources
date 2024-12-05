@@ -14,7 +14,7 @@ class fluentbit inherits fluentbit::params {
   if $os == 'Darwin' {
     exec { 'install fluent-bit':
       command => 'brew install fluent-bit',
-      path    => $facts['path'],
+      path    => $path,
       unless  => 'fluent-bit --version | grep "Fluent Bit"',
     }
   }
