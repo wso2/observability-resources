@@ -63,6 +63,14 @@ if $os == 'Darwin' {
   }
 }
 
+  file { "${opensearch_dashboards_dir}/config/opensearch_dashboards.yml":
+    ensure  => file,
+    content => template('opensearch_dashboards/opensearch_dashboards.yml.erb'),
+    owner   => $deploy_user,
+    group   => $deploy_group,
+    mode    => '0755',
+  }
+
 if $os == 'Darwin' {
   exec { 'run_opensearch_dashboards':
     command     => "nohup ${opensearch_dashboards_dir}/bin/opensearch-dashboards > ${deployment_dir}/opensearch-dashboards/logs/opensearch-dashboards.log 2>&1 &",

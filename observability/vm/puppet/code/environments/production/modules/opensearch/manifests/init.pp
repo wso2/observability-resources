@@ -35,13 +35,13 @@ if $pack_location == "local" {
     onlyif  => "test ! -d ${opensearch_dir}",
   }
 
-  file { 'remove_opensearch_tarball':
-    path      => "${deployment_dir}/opensearch/opensearch-${opensearch_version}-linux-${cpu}.tar.gz",
-    ensure    => absent,
-    owner     => $deploy_user,
-    group     => $deploy_group,
-    subscribe => Exec["unpack_opensearch_tarball"],
-  }
+  # file { 'remove_opensearch_tarball':
+  #   path      => "${deployment_dir}/opensearch/opensearch-${opensearch_version}-linux-${cpu}.tar.gz",
+  #   ensure    => absent,
+  #   owner     => $deploy_user,
+  #   group     => $deploy_group,
+  #   subscribe => Exec["unpack_opensearch_tarball"],
+  # }
 } elsif $pack_location == "remote" {
   notify { 'Remote mode not supported.': }
 }
