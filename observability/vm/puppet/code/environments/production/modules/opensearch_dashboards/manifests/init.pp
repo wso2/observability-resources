@@ -17,24 +17,32 @@ class opensearch_dashboards inherits opensearch_dashboards::params
   }
 
 if $pack_location == "local" {
-  archive { "${deployment_dir}/temp/opensearch-dashboards-${opensearch_version}-linux-${cpu}.tar.gz":
-    ensure       => present,
-    source       => "puppet:///modules/opensearch_dashboards/opensearch-dashboards-${opensearch_version}-linux-${cpu}.tar.gz",
-    extract      => true,
-    extract_path => "${deployment_dir}/opensearch-dashboards",
-    creates      => $opensearch_dashboards_dir,
-    cleanup      => true,
+  file { 'get_opensearch_dashboards_tarball':
+    path    => "${deployment_dir}/opensearch-dashboards/opensearch-dashboards-${opensearch_version}-linux-${cpu}.tar.gz",
+    ensure  => file,
+    source  => "puppet:///modules/opensearch-dashboards/opensearch-dashboards-${opensearch_version}-linux-${cpu}.tar.gz",
+    owner   => $deploy_user,
+    group   => $deploy_group,
+    mode    => '0755',
+  }
+
+  exec { "unpack_opensearch_dashboards_tarball":
+    command => "tar -zxvf ${deployment_dir}/opensearch-dashboards/opensearch-dashboards-${opensearch_version}-linux-${cpu}.tar.gz",
+    path    => $path,
+    cwd     => "${deployment_dir}/opensearch-dashboards",
+    user    => $deploy_user,
+    onlyif  => "test ! -d ${opensearch_dashboards_dir}",
+  }
+
+  file { 'remove_opensearch_dashboards_tarball':
+    path      => "${deployment_dir}/opensearch-dashboards/opensearch-dashboards-${opensearch_version}-linux-${cpu}.tar.gz",
+    ensure    => absent,
+    owner     => $deploy_user,
+    group     => $deploy_group,
+    subscribe => Exec["unpack_opensearch_dashboards_tarball"],
   }
 } elsif $pack_location == "remote" {
-  archive { 'download_opensearch_dashboards_if_not_available_in_puppet':
-    path         => "${deployment_dir}/temp_http/opensearch-dashboards-${opensearch_version}-linux-${cpu}.tar.gz",
-    ensure       => present,
-    source       => $opensearch_dashboards_download_url,
-    extract      => true,
-    extract_path => "${deployment_dir}/opensearch-dashboards",
-    creates      => $opensearch_dashboards_dir,
-    cleanup      => true,
-  }
+  notify { 'Remote mode not supported.': }
 }
 
 if $os == 'Darwin' {

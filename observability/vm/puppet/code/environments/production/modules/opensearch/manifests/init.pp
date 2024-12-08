@@ -43,15 +43,7 @@ if $pack_location == "local" {
     subscribe => Exec["unpack_opensearch_tarball"],
   }
 } elsif $pack_location == "remote" {
-  archive { 'download_opensearch_if_not_available_in_puppet':
-    path         => "${deployment_dir}/temp_http/opensearch-${opensearch_version}-linux-${cpu}.tar.gz",
-    ensure       => present,
-    source       => $opensearch_download_url,
-    extract      => true,
-    extract_path => "${deployment_dir}/opensearch",
-    creates      => $opensearch_dir,
-    cleanup      => true,
-  }
+  notify { 'Remote mode not supported.': }
 }
 
   file { 'copy_install_script':
