@@ -1,6 +1,7 @@
 class fluentbit::params inherits o11y_common::params {
   $fluentbit_version = '3.1.10'
-  $config_path = "${deployment_dir}/fluentbit/wso2-integration.conf"
+  $fluentbit_dir = "${deployment_dir}/fluentbit"
+  $config_path = "${fluentbit_dir}/wso2-integration.conf"
 
   $opensearch_host = 'localhost'
   $opensearch_port = 9200

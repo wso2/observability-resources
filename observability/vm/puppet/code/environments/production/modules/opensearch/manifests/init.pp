@@ -34,6 +34,14 @@ if $pack_location == "local" {
     user    => $deploy_user,
     onlyif  => "test ! -d ${opensearch_dir}",
   }
+
+  file { 'remove_opensearch_tarball':
+    path      => "${deployment_dir}/opensearch/opensearch-${opensearch_version}-linux-${cpu}.tar.gz",
+    ensure    => absent,
+    owner     => $deploy_user,
+    group     => $deploy_group,
+    subscribe => Exec["unpack_opensearch_tarball"],
+  }
 } elsif $pack_location == "remote" {
   archive { 'download_opensearch_if_not_available_in_puppet':
     path         => "${deployment_dir}/temp_http/opensearch-${opensearch_version}-linux-${cpu}.tar.gz",
@@ -83,13 +91,12 @@ if $os == 'Debian' {
     mode    => '0755',
   }
 
-  service { 'opensearch_service':
+  service { 'opensearch.service':
     ensure     => running,
     enable     => true,
     require    => [
       File['copy_opensearch_service'],
     ],
-    subscribe  => File['copy_opensearch_service'],
   }
 } elsif $os == 'Darwin' {
 

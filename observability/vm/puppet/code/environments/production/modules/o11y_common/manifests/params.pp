@@ -1,6 +1,11 @@
 class o11y_common::params {
   $os = $facts['os']['family']
-  $cpu = $facts['os']['architecture']
+  $cpu_fact = $facts['os']['architecture']
+  if $cpu_fact == 'amd64' {
+    $cpu = 'x64'
+  } else {
+    $cpu = $cpu_fact
+  }
   $shell = '/bin/sh'
   $path = $facts['path']
   $pack_location = 'local'
@@ -17,7 +22,7 @@ if $os == 'Darwin' {
 } elsif $os == 'Debian' {
   $user_id = 802
   $user_group_id = 802
-  $deployment_dir = '/opt/wso2/observability'
+  $deployment_dir = '/opt/wso2-observability'
   $deploy_user = 'wso2carbon'
   $deploy_group = 'wso2'
   $demo = true
@@ -29,5 +34,5 @@ if $os == 'Darwin' {
   $java_symlink = "/usr/bin/java"
   $jdk_name = 'openjdk-17.0.2_linux-x64_bin'
   # $jdk_name = 'amazon-corretto-17.0.6.10.1-linux-x64'
-  $java_home = "${java_dir}/${jdk_name}"
+  $java_home = "${java_dir}/jdk-17.0.2"
 }

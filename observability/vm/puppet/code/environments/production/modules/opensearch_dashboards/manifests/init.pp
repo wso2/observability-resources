@@ -55,11 +55,30 @@ if $os == 'Darwin' {
   }
 }
 
+if $os == 'Darwin' {
   exec { 'run_opensearch_dashboards':
     command     => "nohup ${opensearch_dashboards_dir}/bin/opensearch-dashboards > ${deployment_dir}/opensearch-dashboards/logs/opensearch-dashboards.log 2>&1 &",
     path        => $facts['path'],
     unless      => "pgrep -f \"${opensearch_dashboards_dir}\"",
   }
+} elsif $os == 'Debian' {
+  file { 'copy_opensearch_dashboards_service':
+    path    => "${systemctl_path}/opensearch_dashboards.service",
+    ensure  => file,
+    content => template('opensearch/opensearch_dashboards.service.erb'),
+    owner   => $deploy_user,
+    group   => $deploy_group,
+    mode    => '0755',
+  }
+
+  service { 'opensearch_dashboards.service':
+    ensure     => running,
+    enable     => true,
+    require    => [
+      File['copy_opensearch_dashboards_service'],
+    ],
+  }
+}
 
   file { "${deployment_dir}/opensearch-dashboards/wso2":
     ensure => directory,

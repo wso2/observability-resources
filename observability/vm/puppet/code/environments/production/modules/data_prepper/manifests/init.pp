@@ -43,7 +43,6 @@ if $os == 'Debian' {
     command     => "nohup docker-compose up > logs/data_prepper.log 2>&1 &",
     cwd         => $data_prepper_dir,
     path        => $facts['path'],
-    # unless      => "ps aux | grep '[f]luent-bit -c ${config_path}'",
     logoutput   => true,
   }
 }
