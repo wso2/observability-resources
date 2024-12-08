@@ -6,10 +6,9 @@ class common::params {
   # JDK Distributions
   $java_dir = "/opt"
   $java_symlink = "/usr/bin/java"
-  # $jdk_name = 'amazon-corretto-17.0.6.10.1-linux-x64'
   $jdk_name = 'openjdk-17.0.2_linux-x64_bin'
-  $java_home = "${java_dir}/${jdk_name}"
-
+  # $jdk_name = 'amazon-corretto-17.0.6.10.1-linux-x64'
+  $java_home = "${java_dir}/jdk-17.0.2"
 
   $os = $facts['os']['family']
   $cpu = $facts['os']['architecture']
@@ -27,7 +26,7 @@ if $os == 'Darwin' {
 } elsif $os == 'Debian' {
   $user_id = 802
   $user_group_id = 802
-  $deployment_dir = '/opt/wso2/observability'
+  $deployment_dir = '/opt/wso2-observability'
   $deploy_user = 'wso2carbon'
   $deploy_group = 'wso2'
   $demo = true

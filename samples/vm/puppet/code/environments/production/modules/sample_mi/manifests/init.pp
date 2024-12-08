@@ -61,9 +61,30 @@ class sample_mi inherits sample_mi::params {
     mode   => '0644',
   }
 
+if $os == 'Debian' {
+
+  file { 'copy_mi_service':
+    path    => "${systemctl_path}/wso2-mi.service",
+    ensure  => file,
+    content => template('sample_mi/wso2-mi.service.erb'),
+    owner   => $deploy_user,
+    group   => $deploy_group,
+    mode    => '0755',
+  }
+
+  service { 'wso2-mi.service':
+    ensure     => running,
+    enable     => true,
+    require    => [
+      File['copy_mi_service'],
+    ],
+  }
+} elsif $os == 'Darwin' {
+
   exec { 'run_mi':
     command     => "nohup /bin/sh ${mi_dir}/bin/micro-integrator.sh > ${mi_dir}/repository/logs/console.log 2>&1 &",
     path        => $facts['path'],
   }
+}
 
 }
