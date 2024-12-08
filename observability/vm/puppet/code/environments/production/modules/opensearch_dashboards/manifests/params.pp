@@ -3,6 +3,7 @@ class opensearch_dashboards::params inherits opensearch::params {
   $opensearch_dashboards_dir = "${deployment_dir}/opensearch-dashboards/opensearch-dashboards-${opensearch_version}"
 
   $opensearch_host = 'localhost'
+  $bind_address = '0.0.0.0'
 
   $node_version = '16.13.0'
   $node_cpu = "${os}-${cpu}"

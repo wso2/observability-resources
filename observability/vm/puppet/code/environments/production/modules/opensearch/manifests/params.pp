@@ -8,6 +8,7 @@ class opensearch::params inherits o11y_common::params {
 
   $deployment_mode = 'single_node'
   $opensearch_host = 'localhost'
+  $bind_address = '0.0.0.0'
   $opensearch_version = '2.15.0'
   $opensearch_download_url = "https://artifacts.opensearch.org/releases/bundle/opensearch/${opensearch_version}/opensearch-${opensearch_version}-linux-${cpu}.tar.gz"
   $opensearch_dir = "${deployment_dir}/opensearch/opensearch-${opensearch_version}"

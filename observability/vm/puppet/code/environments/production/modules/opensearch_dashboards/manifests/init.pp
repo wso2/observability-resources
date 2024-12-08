@@ -20,7 +20,7 @@ if $pack_location == "local" {
   file { 'get_opensearch_dashboards_tarball':
     path    => "${deployment_dir}/opensearch-dashboards/opensearch-dashboards-${opensearch_version}-linux-${cpu}.tar.gz",
     ensure  => file,
-    source  => "puppet:///modules/opensearch-dashboards/opensearch-dashboards-${opensearch_version}-linux-${cpu}.tar.gz",
+    source  => "puppet:///modules/opensearch_dashboards/opensearch-dashboards-${opensearch_version}-linux-${cpu}.tar.gz",
     owner   => $deploy_user,
     group   => $deploy_group,
     mode    => '0755',
@@ -34,13 +34,13 @@ if $pack_location == "local" {
     onlyif  => "test ! -d ${opensearch_dashboards_dir}",
   }
 
-  file { 'remove_opensearch_dashboards_tarball':
-    path      => "${deployment_dir}/opensearch-dashboards/opensearch-dashboards-${opensearch_version}-linux-${cpu}.tar.gz",
-    ensure    => absent,
-    owner     => $deploy_user,
-    group     => $deploy_group,
-    subscribe => Exec["unpack_opensearch_dashboards_tarball"],
-  }
+  # file { 'remove_opensearch_dashboards_tarball':
+  #   path      => "${deployment_dir}/opensearch-dashboards/opensearch-dashboards-${opensearch_version}-linux-${cpu}.tar.gz",
+  #   ensure    => absent,
+  #   owner     => $deploy_user,
+  #   group     => $deploy_group,
+  #   subscribe => Exec["unpack_opensearch_dashboards_tarball"],
+  # }
 } elsif $pack_location == "remote" {
   notify { 'Remote mode not supported.': }
 }
@@ -73,7 +73,7 @@ if $os == 'Darwin' {
   file { 'copy_opensearch_dashboards_service':
     path    => "${systemctl_path}/opensearch_dashboards.service",
     ensure  => file,
-    content => template('opensearch/opensearch_dashboards.service.erb'),
+    content => template('opensearch_dashboards/opensearch_dashboards.service.erb'),
     owner   => $deploy_user,
     group   => $deploy_group,
     mode    => '0755',
