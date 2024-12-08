@@ -4,6 +4,8 @@ class opensearch_dashboards::params inherits opensearch::params {
 
   $opensearch_host = 'localhost'
   $bind_address = '0.0.0.0'
+  $opensearch_username = 'admin'
+  $opensearch_password = 'Observer_123'
 
   $node_version = '16.13.0'
   $node_cpu = "${os}-${cpu}"
