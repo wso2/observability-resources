@@ -3,9 +3,11 @@ class fluentbit inherits fluentbit::params {
 
   include o11y_common
 
-  if $os == 'Debian' {
+  class { 'apt':
+    update => true,
+  }
 
-    include apt
+  if $os == 'Debian' {
 
     # Add the custom APT repository
     apt::source { 'fluentbit_repo':
@@ -14,22 +16,15 @@ class fluentbit inherits fluentbit::params {
       release         => $os_codename,
       repos           => 'main',
       key             => {
-        'id'     => 'fluentbit-key',
+        'id'     => 'C3C0A28534B9293EAF51FABD9F9DDC083888C1CD',
         'source' => 'https://packages.fluentbit.io/fluentbit.key',
       },
-    }
-
-    # Ensure the APT package lists are updated
-    exec { 'apt_update':
-      command     => '/usr/bin/apt-get update',
-      refreshonly => true,
-      subscribe   => Apt::Source['fluentbit_repo'],
     }
 
     # Install the package from the custom repository
     package { 'fluent-bit':
       ensure  => present,
-      require => Exec['apt_update'],
+      require => Apt::Source['fluent-bit'],
     }
 
     # file { 'copy_fluentbit_install_script':
@@ -51,7 +46,7 @@ class fluentbit inherits fluentbit::params {
     file { '/usr/bin/fluent-bit':
       ensure  => "link",
       target  => '/opt/fluent-bit/bin/fluent-bit',
-      require => Exec["install fluent-bit"],
+      require => Package["fluent-bit"],
     }
 
   }

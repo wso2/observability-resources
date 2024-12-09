@@ -37,6 +37,8 @@ fi
 if [ "$1" == "local" ]; then
     cd puppet/code
 
+    sudo puppet module install puppetlabs-apt --modulepath /opt/puppetlabs/puppet/modules/
+
     export FACTER_profile=opensearch
     puppet apply --environmentpath=environments --environment=production environments/production/manifests/site.pp
 
