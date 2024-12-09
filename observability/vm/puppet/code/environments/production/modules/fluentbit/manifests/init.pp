@@ -4,8 +4,18 @@ class fluentbit inherits fluentbit::params {
   include o11y_common
 
   if $os == 'Debian' {
+
+    file { 'copy_fluentbit_install_script':
+      path    => "${fluentbit_dir}/ubuntu-install.sh",
+      ensure  => file,
+      content => template('fluentbit/ubuntu-install.sh.erb'),
+      owner   => $deploy_user,
+      group   => $deploy_group,
+      mode    => '0644',
+    }
+
     exec { 'install fluent-bit':
-      command => 'apt install -y fluent-bit',
+      command => "${shell} ${fluentbit_dir}/ubuntu-install.sh",
       path    => $path,
       unless  => 'fluent-bit --version | grep "Fluent Bit"',
     }

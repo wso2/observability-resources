@@ -113,7 +113,7 @@ install_ballerina() {
     sudo apt-get install -f -y
 
     # Verify installation
-    ballerina version
+    bal version
 }
 
 if [ "$1" == "prepare" ]; then

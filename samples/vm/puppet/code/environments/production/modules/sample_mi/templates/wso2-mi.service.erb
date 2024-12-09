@@ -14,6 +14,8 @@ Group=<%= @deploy_group %>
 
 ExecStart=<%= @mi_dir %>/bin/micro-integrator.sh -p <%= @mi_dir %>/wso2-mi.pid -q
 
+Environment="JAVA_HOME=<%= @java_home %>"
+
 StandardOutput=journal
 StandardError=inherit
 

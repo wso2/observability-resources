@@ -3,6 +3,10 @@ class sample_mi inherits sample_mi::params {
   include common
   include common::java
 
+  package { 'unzip':
+    ensure => installed,
+  }
+
   file { 'creae_mi_base_dir':
     path   => "${deployment_dir}/mi",
     ensure => directory,

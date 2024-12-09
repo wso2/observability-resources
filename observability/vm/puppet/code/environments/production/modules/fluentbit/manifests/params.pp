@@ -17,4 +17,8 @@ class fluentbit::params inherits o11y_common::params {
   $mi_metrics_logs_path = "${mi_logs_path}/metrics.log"
 
   $deployment_name = "deployment_1"
+
+  if $os == 'Debian' {
+    $os_codename = $facts['os']['distro']['codename']
+  }
 }
