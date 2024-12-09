@@ -5,21 +5,48 @@ class fluentbit inherits fluentbit::params {
 
   if $os == 'Debian' {
 
-    file { 'copy_fluentbit_install_script':
-      path    => "${fluentbit_dir}/ubuntu-install.sh",
-      ensure  => file,
-      content => template('fluentbit/ubuntu-install.sh.erb'),
-      owner   => $deploy_user,
-      group   => $deploy_group,
-      mode    => '0644',
+    include apt
+
+    # Add the custom APT repository
+    apt::source { 'fluentbit_repo':
+      ensure          => present,
+      location        => "https://packages.fluentbit.io/ubuntu/${os_codename}",
+      release         => $os_codename,
+      repos           => 'main',
+      key             => {
+        'id'     => 'fluentbit-key',
+        'source' => 'https://packages.fluentbit.io/fluentbit.key',
+      },
     }
 
-    exec { 'install fluent-bit':
-      command => "${shell} ${fluentbit_dir}/ubuntu-install.sh",
-      path    => $path,
-      user    => $deploy_user,
-      # unless  => 'fluent-bit --version | grep "Fluent Bit"',
+    # Ensure the APT package lists are updated
+    exec { 'apt_update':
+      command     => '/usr/bin/apt-get update',
+      refreshonly => true,
+      subscribe   => Apt::Source['fluentbit_repo'],
     }
+
+    # Install the package from the custom repository
+    package { 'fluent-bit':
+      ensure  => present,
+      require => Exec['apt_update'],
+    }
+
+    # file { 'copy_fluentbit_install_script':
+    #   path    => "${fluentbit_dir}/ubuntu-install.sh",
+    #   ensure  => file,
+    #   content => template('fluentbit/ubuntu-install.sh.erb'),
+    #   owner   => $deploy_user,
+    #   group   => $deploy_group,
+    #   mode    => '0644',
+    # }
+
+    # exec { 'install fluent-bit':
+    #   command => "${shell} ${fluentbit_dir}/ubuntu-install.sh",
+    #   path    => $path,
+    #   user    => $deploy_user,
+    #   # unless  => 'fluent-bit --version | grep "Fluent Bit"',
+    # }
 
     file { '/usr/bin/fluent-bit':
       ensure  => "link",
