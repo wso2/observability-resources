@@ -2,10 +2,7 @@
 class fluentbit inherits fluentbit::params {
 
   include o11y_common
-
-  class { 'apt':
-    update => true,
-  }
+  include apt
 
   if $os == 'Debian' {
 
@@ -19,29 +16,14 @@ class fluentbit inherits fluentbit::params {
         'id'     => 'C3C0A28534B9293EAF51FABD9F9DDC083888C1CD',
         'source' => 'https://packages.fluentbit.io/fluentbit.key',
       },
+      notify => Exec['apt_update'],
     }
 
     # Install the package from the custom repository
     package { 'fluent-bit':
       ensure  => present,
-      require => Apt::Source['fluent-bit'],
+      require => Apt::Source['fluentbit_repo'],
     }
-
-    # file { 'copy_fluentbit_install_script':
-    #   path    => "${fluentbit_dir}/ubuntu-install.sh",
-    #   ensure  => file,
-    #   content => template('fluentbit/ubuntu-install.sh.erb'),
-    #   owner   => $deploy_user,
-    #   group   => $deploy_group,
-    #   mode    => '0644',
-    # }
-
-    # exec { 'install fluent-bit':
-    #   command => "${shell} ${fluentbit_dir}/ubuntu-install.sh",
-    #   path    => $path,
-    #   user    => $deploy_user,
-    #   # unless  => 'fluent-bit --version | grep "Fluent Bit"',
-    # }
 
     file { '/usr/bin/fluent-bit':
       ensure  => "link",
@@ -114,6 +96,7 @@ if $os == 'Debian' {
     enable     => true,
     require    => [
       File['copy_fluentbit_service'],
+      File['/usr/bin/fluent-bit'],
     ],
   }
 } elsif $os == 'Darwin' {
