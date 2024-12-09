@@ -17,8 +17,16 @@ class fluentbit inherits fluentbit::params {
     exec { 'install fluent-bit':
       command => "${shell} ${fluentbit_dir}/ubuntu-install.sh",
       path    => $path,
-      unless  => 'fluent-bit --version | grep "Fluent Bit"',
+      user    => $deploy_user,
+      # unless  => 'fluent-bit --version | grep "Fluent Bit"',
     }
+
+    file { '/usr/bin/fluent-bit':
+      ensure  => "link",
+      target  => '/opt/fluent-bit/bin/fluent-bit',
+      require => Exec["install fluent-bit"],
+    }
+
   }
 
   if $os == 'Darwin' {
