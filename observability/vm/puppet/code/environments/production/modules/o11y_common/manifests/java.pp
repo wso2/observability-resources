@@ -36,11 +36,11 @@ if $java_installed == "false" {
     require => Exec["unpack-jdk"]
   }
 
-  file { "remove_java_archive":
-      path   => "${java_home}.tar.gz",
-      ensure => absent,
-      require => Exec["unpack-jdk"]
-  }
+  # file { "remove_java_archive":
+  #     path   => "${java_home}.tar.gz",
+  #     ensure => absent,
+  #     require => Exec["unpack-jdk"]
+  # }
 } else {
   notify { 'Java is already installed': }
 }

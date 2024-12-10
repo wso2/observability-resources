@@ -6,6 +6,7 @@ if $o11y_tracing == false {
 
 if $os == 'Debian' {
   include docker_compose
+  return()
 }
 
   file { 'create data-prepper directory':
