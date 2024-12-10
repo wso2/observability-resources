@@ -1,3 +1,23 @@
+FILES_DIR="../../files"
+PUPPET_RELEASE="puppet8-release-noble.deb"
+
+install_puppet() {
+    if [ -f "/usr/bin/puppet" ]; then
+        echo "Puppet is already installed."
+        return 0
+    fi
+
+    cd $FILES_DIR
+    wget https://apt.puppet.com/${PUPPET_RELEASE}
+    sudo dpkg -i ${PUPPET_RELEASE}
+    sudo apt-get update
+    sudo apt-get install puppet-agent
+    cd /usr/bin
+    sudo ln -s /opt/puppetlabs/bin/puppet puppet
+    cd -> /dev/null
+    echo "Puppet installed successfully."
+}
+
 if [ $# -eq 0 ]; then
     echo "Usage:"
     echo "sh deploy.sh download: Download the required artifacts. Artifacts will be downloaded to the 'observability-resources/files' directory."
@@ -16,7 +36,6 @@ if [ "$1" == "download" ]; then
 fi
 
 if [ "$1" == "prepare" ]; then
-    FILES_DIR="../../files"
 
     # Check if FILES_DIR exists
     if [ ! -d "$FILES_DIR" ]; then
@@ -35,9 +54,12 @@ if [ "$1" == "prepare" ]; then
 fi
 
 if [ "$1" == "local" ]; then
+    install_puppet
+    
     cd puppet/code
 
     sudo puppet module install puppetlabs-apt --modulepath /opt/puppetlabs/puppet/modules/
+    sudo puppet module install puppetlabs-docker --modulepath /opt/puppetlabs/puppet/modules/
 
     export FACTER_profile=opensearch
     puppet apply --environmentpath=environments --environment=production environments/production/manifests/site.pp
