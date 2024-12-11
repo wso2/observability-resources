@@ -2,9 +2,14 @@ class data_prepper inherits data_prepper::params {
 
   include o11y_common
 
-  if $o11y_tracing == false {
-    return()
-  }
+if $o11y_tracing == false {
+  return()
+}
+
+# if $os == 'Debian' {
+#   include data_prepper::docker_compose
+#   return()
+# }
 
   file { 'create data-prepper directory':
     path   => $data_prepper_dir,
@@ -42,10 +47,7 @@ class data_prepper inherits data_prepper::params {
   docker::run { 'data-prepper-node':
     image         => 'opensearchproject/data-prepper:latest',
     ensure        => present,
-    ports         => [
-      "8021:8021",
-      "${otel_trace_port}:${otel_trace_port}",
-    ],
+    ports         => [ "8021:8021", "${otel_trace_port}:${otel_trace_port}"],
     volumes       => [
       "${data_prepper_dir}/pipelines.yaml:/usr/share/data-prepper/pipelines/pipelines.yaml",
     ],
@@ -53,4 +55,3 @@ class data_prepper inherits data_prepper::params {
       Docker::Image['opensearchproject/data-prepper:latest'],
     ],
   }
-}

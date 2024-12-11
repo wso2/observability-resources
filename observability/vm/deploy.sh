@@ -12,9 +12,10 @@ install_puppet() {
     sudo dpkg -i ${PUPPET_RELEASE}
     sudo apt-get update
     sudo apt-get install puppet-agent
+    cd - > /dev/null
     cd /usr/bin
     sudo ln -s /opt/puppetlabs/bin/puppet puppet
-    cd -> /dev/null
+    cd - > /dev/null
     echo "Puppet installed successfully."
 }
 
@@ -55,7 +56,7 @@ fi
 
 if [ "$1" == "local" ]; then
     install_puppet
-    
+
     cd puppet/code
 
     sudo puppet module install puppetlabs-apt --modulepath /opt/puppetlabs/puppet/modules/
