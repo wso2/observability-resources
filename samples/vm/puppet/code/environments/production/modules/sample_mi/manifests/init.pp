@@ -28,6 +28,7 @@ class sample_mi inherits sample_mi::params {
     command => "unzip ${deployment_dir}/mi/wso2mi-${mi_version}.zip",
     path    => $path,
     cwd     => "${deployment_dir}/mi",
+    creates => "${deployment_dir}/mi/wso2mi-${mi_version}",
     user    => $deploy_user,
   }
 

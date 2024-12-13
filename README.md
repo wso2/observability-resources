@@ -152,3 +152,39 @@ Fluent Bit pods are deployed as a Kubernetes DaemonSet. Therefore, One Fluent Bi
 Each MI and Ballerina pod sends tracing data to Data Prepper according to the Open Telemetry format. Data Prepper performs some preprocessing operations and sends processed tracing data to OpenSearch data pods.
 
 OpenSearch data pods handle all data processing operations such as indexing, searching, and aggregations. OpenSearch master pods perform cluster coordination operations such as index/shard allocations and maintaining the cluster's health. OpenSearch dashboard pods act as the backend for the observability dashboard. All log visualizations and dashboards are deployed into dashboard pods. 
+
+### Deploying the observability solution on VMs
+
+#### Ubuntu
+
+- Clone the observability repository
+- Navigate to the `observability-resources/observability/vm` folder.
+- Run the `deploy.sh` script by providing the component name to be installed as the first argument.
+    - Install OpenSearch: `sudo -E bash deploy.sh opensearch`
+    - Install OpenSearch Dashboards: `sudo -E bash deploy.sh opensearch-dashboards`
+    - Install Fluent Bit: `sudo -E bash deploy.sh fluentbit` 
+    - Install Data Prepper: `sudo -E bash deploy.sh data-prepper`
+- It is possible to install all components in a single VM (e.g. for testing or demo purposes) by running the following command: - `sudo -E bash deploy.sh local`
+
+#### Mac
+
+- Install Java
+- Install Puppet agent
+- Navigate to the `observability-resources/observability/vm` folder.
+- Run `sudo -E bash deploy.sh local` to deploy all components of the locally
+
+### Deploying samples
+
+#### Ubuntu
+
+- Clone the observability repository
+- Navigate to the `observability-resources/samples/vm` folder.
+- Run the follwoing command: `sudo -E bash deploy.sh samples`
+
+#### Mac
+
+- Install Java
+- Install Puppet agent
+- Clone the observability repository
+- Navigate to the `observability-resources/samples/vm` folder.
+- Run the follwoing command: `sudo -E bash deploy.sh samples`

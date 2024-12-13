@@ -21,11 +21,13 @@ class data_prepper inherits data_prepper::params {
     mode   => '0755',
   }
 
-  file { "${data_prepper_dir}/pipelines.yaml":
+  file { 'data-prepper-pipelines':
+    path    => "${data_prepper_dir}/pipelines.yaml",
     ensure  => file,
     content => template('data_prepper/pipelines.yaml.erb'),
     owner  => $deploy_user,
     group  => $deploy_group,
+    force   => true,
     mode    => '0644',
   }
 
@@ -52,5 +54,6 @@ class data_prepper inherits data_prepper::params {
     require       => [
       Docker::Image['opensearchproject/data-prepper:latest'],
     ],
+    subscribe     => File['data-prepper-pipelines'],
   }
 }

@@ -9,7 +9,7 @@ class data_prepper::params inherits o11y_common::params {
   $docker_compose_install_path = '/usr/local/bin/docker-compose'
 
   $otel_trace_port = 4317
-  $opensearch_host = 'host.docker.internal'
+  $opensearch_host = $facts['networking']['ip'] # Replace this with the ip address of the OpenSearch host
   $opensearch_username = 'admin'
   $opensearch_password = 'Observer_123'
 
