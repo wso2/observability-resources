@@ -2,9 +2,12 @@
 class fluentbit inherits fluentbit::params {
 
   include o11y_common
-  include apt
 
   if $os == 'Debian' {
+
+    notify { 'Installing Fluent Bit on Debian': }
+
+    include apt
 
     # Add the custom APT repository
     apt::source { 'fluentbit_repo':
@@ -34,6 +37,8 @@ class fluentbit inherits fluentbit::params {
   }
 
   if $os == 'Darwin' {
+    notify { 'Installing Fluent Bit on Darwin': }
+
     exec { 'install fluent-bit':
       command => 'brew install fluent-bit',
       path    => $path,

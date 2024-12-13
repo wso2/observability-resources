@@ -14,8 +14,12 @@ if [ $ARCH == "arm64" ]; then
     OPENSEARCH_DASHBOARDS_DOWNLOAD_URL='https://artifacts.opensearch.org/releases/bundle/opensearch-dashboards/2.15.0/opensearch-dashboards-2.15.0-linux-arm64.tar.gz'
 fi
 
+print() {
+    echo "====== $1 ======"
+}
+
 if [ $# -eq 0 ]; then
-    echo "Usage:"
+    print "Usage:"
     echo "sudo -E sh deploy.sh opensearch: Install Opensearch."
     echo "sudo -E sh deploy.sh opensearch-dashboards: Install Opensearch Dashboards."
     echo "sudo -E sh deploy.sh fluentbit: Install Fluent Bit."
@@ -25,13 +29,13 @@ if [ $# -eq 0 ]; then
 fi
 
 install_puppet() {
-    if [ which puppet > /dev/null 2>&1 ]; then
-        echo "Puppet is installed."
+    if command -v puppet >/dev/null 2>&1; then
+        print "Puppet is installed."
         return 0
     fi
 
     if [ "$OS_TYPE" == "Darwin" ]; then
-        echo "Please install Puppet agent."
+        print "Please install Puppet agent."
         exit 1
     fi
 
@@ -50,44 +54,50 @@ install_puppet() {
 if [ "$1" == "local" ]; then
     if [ $OS_TYPE != "Darwin" ]; then
         if [ ! -f "$FILES_DIR"/openjdk-17*.tar.gz ]; then
+            echo "Downloading OpenJDK 17..."
             wget $JAVA_DOWNLOAD_URL -P $FILES_DIR
         fi
         cp "$FILES_DIR"/openjdk-17*.tar.gz puppet/code/environments/production/modules/o11y_common/files/
     fi
 
     if [ ! -f "$FILES_DIR"/opensearch-2.*.tar.gz ]; then
+        print "Downloading Opensearch..."
         wget $OPENSEARCH_DOWNLOAD_URL -P $FILES_DIR
     fi
     cp "$FILES_DIR"/opensearch-2.*.tar.gz puppet/code/environments/production/modules/opensearch/files/
 
-    if [ ! -f "$FILES_DIR"/opensearch_dashboards-2.*.tar.gz ]; then
+    if [ ! -f "$FILES_DIR"/opensearch-dashboards-2.*.tar.gz ]; then
+        echo "Downloading Opensearch Dashboards..."
         wget $OPENSEARCH_DASHBOARDS_DOWNLOAD_URL -P $FILES_DIR
     fi
-    cp "$FILES_DIR"/opensearch_dashboards-2.*.tar.gz puppet/code/environments/production/modules/opensearch_dashboards/files/
+    cp "$FILES_DIR"/opensearch-dashboards-2.*.tar.gz puppet/code/environments/production/modules/opensearch_dashboards/files/
 
     install_puppet
     cd puppet/code
-    sudo puppet module install puppetlabs-apt --modulepath /opt/puppetlabs/puppet/modules/
-    sudo puppet module install puppetlabs-docker --modulepath /opt/puppetlabs/puppet/modules/
+    puppet module install puppetlabs-apt --modulepath /opt/puppetlabs/puppet/modules/
+    puppet module install puppetlabs-docker --modulepath /opt/puppetlabs/puppet/modules/
 
+    print "Installing Opensearch..."
     export FACTER_profile=opensearch
     puppet apply --environmentpath=environments --environment=production environments/production/manifests/site.pp
 
+    print "Installing Opensearch Dashboards..."
     export FACTER_profile=opensearch_dashboards
     puppet apply --environmentpath=environments --environment=production environments/production/manifests/site.pp
 
+    print "Installing Fluent Bit..."
     export FACTER_profile=fluentbit
     puppet apply --environmentpath=environments --environment=production environments/production/manifests/site.pp
 
+    print "Installing Data Prepper..."
     export FACTER_profile=data_prepper
     puppet apply --environmentpath=environments --environment=production environments/production/manifests/site.pp
 
     echo "Observability solution deployed successfully."
-fi
 
-if [ "$1" == "opensearch" ]; then
+elif [ "$1" == "opensearch" ]; then
 
-    f [ $OS_TYPE != "Darwin" ]; then
+    if [ $OS_TYPE != "Darwin" ]; then
         if [ ! -f "$FILES_DIR"/openjdk-17*.tar.gz ]; then
             wget $JAVA_DOWNLOAD_URL -P $FILES_DIR
         fi
@@ -137,8 +147,8 @@ elif [ "$1" == "data-prepper" ]; then
     sudo puppet module install puppetlabs-docker --modulepath /opt/puppetlabs/puppet/modules/
     export FACTER_profile=data_prepper
     puppet apply --environmentpath=environments --environment=production environments/production/manifests/site.pp
-    echo "Data Prepper deployed successfully."
+    print "Data Prepper deployed successfully."
         
 else
-    echo "Invalid option. Please refer the usage."
+    rpint "Invalid option. Please refer the usage."
 fi

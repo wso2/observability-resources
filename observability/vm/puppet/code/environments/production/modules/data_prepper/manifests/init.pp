@@ -31,6 +31,8 @@ class data_prepper inherits data_prepper::params {
     mode    => '0644',
   }
 
+if $os == 'Debian' {
+
   # Ensure the Docker service is running
   class { 'docker':
   }
@@ -56,4 +58,31 @@ class data_prepper inherits data_prepper::params {
     ],
     subscribe     => File['data-prepper-pipelines'],
   }
+
+} else {
+  $docker_compose_installed = inline_template('<%=`which docker-compose 2>&1`.empty? ? false : true %>')
+  if $docker_compose_installed == "true" {
+    notify { 'Docker Compose found. Installing Data Pepper...': }
+
+    file { 'docker_compose_file':
+      path    => "${data_prepper_dir}/docker-compose.yml",
+      ensure  => file,
+      content => template('data_prepper/docker-compose.yml.erb'),
+      owner  => $deploy_user,
+      group  => $deploy_group,
+      force   => true,
+      mode    => '0644',
+    }
+
+    exec { 'run_data_prepper':
+      command     => "docker-compose -f ${data_prepper_dir}/docker-compose.yml up -d",
+      path        => $path,
+      user        => $deploy_user,
+      subscribe   => File['docker_compose_file'],
+    }
+  } else {
+    notify { 'Docker Compose not found. Skipping Data Pepper installation. Tracing support will not be available.': }
+    return()
+  }
+}
 }

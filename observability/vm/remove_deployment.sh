@@ -12,8 +12,14 @@
 # Constants
 # ================================================
 
+OS_TYPE=$(uname)
+if [ "$OS_TYPE" != "Darwin" ]; then
+    echo "This script is supported only on macOS."
+    exit 1
+fi
+
 # Base deployment directory
-DEPLOYMENT_DIR="/Users/chathura/wso2_observability"
+DEPLOYMENT_DIR="$HOME/wso2_observability"
 
 # Ports to kill processes on
 PORTS=(5601 9200)
@@ -118,9 +124,7 @@ done
 
 kill_fluent_bit
 
-delete_directory "$DEPLOYMENT_DIR"
-
-Delete specified directories
+# Delete specified directories
 for SUBDIR in "${SUBDIRS[@]}"; do
     FULL_DIR="$DEPLOYMENT_DIR/$SUBDIR"
     delete_directory "$FULL_DIR"

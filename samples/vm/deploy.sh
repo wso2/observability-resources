@@ -7,6 +7,9 @@ if [ $# -eq 0 ]; then
     exit 1
 fi
 
+OS_TYPE=$(uname)
+ARCH=$(uname -m)
+
 # Exit immediately if a command exits with a non-zero status
 set -e
 
@@ -34,6 +37,11 @@ install_openjdk() {
     if command -v java >/dev/null 2>&1; then
         echo "Java is already installed."
         return 0
+    fi
+
+    if [ "$OS_TYPE" == "Darwin" ]; then
+        print_message "Java not found."
+        exit 1
     fi
 
     print_message "Installing OpenJDK 17"
@@ -77,6 +85,11 @@ install_maven() {
         return 0
     fi
 
+    if [ "$OS_TYPE" == "Darwin" ]; then
+        print_message "Maven not found."
+        exit 1
+    fi
+
     print_message "Installing Maven"
 
     # Update package index
@@ -94,6 +107,11 @@ install_ballerina() {
     if command -v bal >/dev/null 2>&1; then
         echo "Ballerina is already installed."
         return 0
+    fi
+
+    if [ "$OS_TYPE" == "Darwin" ]; then
+        print_message "Ballerina not found."
+        exit 1
     fi
 
     print_message "Installing Ballerina"
@@ -115,16 +133,6 @@ install_ballerina() {
     # Verify installation
     bal version
 }
-
-if [ "$1" == "prepare" ]; then
-    if [ -f /etc/debian_version ]; then
-        install_openjdk
-        install_maven
-        install_ballerina
-    fi
-fi
-
-#!/bin/bash
 
 BAL_PROJECTS=("crm" "inventory" "shipments" "portal")
 MI_BOOKPARK="../source/tomsbooks/bookpark"
@@ -190,6 +198,13 @@ build_mi_project() {
 }
 
 if [ "$1" == "prepare" ]; then
+
+    if [ -f /etc/debian_version ]; then
+        install_openjdk
+        install_maven
+        install_ballerina
+    fi
+
     # Build the Ballerina projects
     for project in "${BAL_PROJECTS[@]}"; do
         build_project $project
@@ -207,14 +222,17 @@ if [ "$1" == "local" ]; then
     print_message "Deploying samples locally..."
     cd puppet/code
 
+    print_message "Deploying Ballerina project - Shipments"
     export FACTER_profile=sample_bal_shipments
-    puppet apply --environmentpath=environments --environment=production -v environments/production/manifests/site.pp
+    puppet apply --environmentpath=environments --environment=production environments/production/manifests/site.pp
 
+    print_message "Deploying Ballerina project - Inventory"
     export FACTER_profile=sample_bal_inventory
-    puppet apply --environmentpath=environments --environment=production -v environments/production/manifests/site.pp
+    puppet apply --environmentpath=environments --environment=production environments/production/manifests/site.pp
 
+    print_message "Deploying Micro Integrator"
     export FACTER_profile=sample_mi
-    puppet apply --environmentpath=environments --environment=production -v environments/production/manifests/site.pp
+    puppet apply --environmentpath=environments --environment=production environments/production/manifests/site.pp
 
     print_message "Samples deployed successfully!"
 fi
