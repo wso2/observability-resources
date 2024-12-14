@@ -1,0 +1,29 @@
+function construct_mi_app_name(tag, timestamp, record)
+    if record["deployment"] == "none" then
+        record["deployment"] = nil
+    end
+
+    if record["deployment"] and record["package"] then
+        record["app"] = record["deployment"] .. " - " .. record["package"]
+    elseif record["deployment"] then
+        record["app"] = record["deployment"]
+    elseif record["package"] then
+        record["app"] = record["package"]
+    else
+        record["app"] = "unknown"
+    end
+    return 1, timestamp, record
+end
+
+function construct_bal_app_name(tag, timestamp, record)
+    if record["deployment"] == "none" then
+        record["deployment"] = nil
+    end
+
+    if record["deployment"] then
+        record["app"] = record["deployment"] .. " - " .. record["module"]
+    else
+        record["app"] = record["module"]
+    end
+    return 1, timestamp, record
+end

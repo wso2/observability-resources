@@ -46,14 +46,14 @@
 [FILTER]
     Name modify
     Match wso2_bal_logs
-    Add app ${DEPLOYMENT}
+    Add deployment ${DEPLOYMENT}
     Add product integrator
     Add component ballerina
 
 [FILTER]
     Name modify
     Match wso2_mi_*
-    Add app ${DEPLOYMENT}
+    Add deployment ${DEPLOYMENT}
     Add product integrator
     Add component mi
 
@@ -85,6 +85,18 @@
     Parser wso2mi_metrics_parser
     Reserve_Data True
     Preserve_Key True
+
+[FILTER]
+    Name   lua
+    Match  wso2_mi_app_logs
+    Script scripts.lua
+    Call   construct_mi_app_name
+
+[FILTER]
+    Name   lua
+    Match  wso2_bal_logs
+    Script scripts.lua
+    Call   construct_bal_app_name
 
 [FILTER]
     Name rewrite_tag

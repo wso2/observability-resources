@@ -16,7 +16,7 @@ class fluentbit::params inherits o11y_common::params {
   $mi_app_logs_path = "${mi_logs_path}/wso2carbon.log"
   $mi_metrics_logs_path = "${mi_logs_path}/metrics.log"
 
-  $deployment_name = "deployment_1"
+  $deployment_name = "none"
 
   if $os == 'Debian' {
     $os_codename = $facts['os']['distro']['codename']

@@ -77,6 +77,14 @@ class fluentbit inherits fluentbit::params {
     mode    => '0644',
   }
 
+  file { "${fluentbit_dir}/scripts.lua":
+    ensure  => file,
+    content => template('fluentbit/scripts.lua.erb'),
+    owner   => $deploy_user,
+    group   => $deploy_group,
+    mode    => '0644',
+  }
+
   file { "${fluentbit_dir}/fluent-bit-wrapper.sh":
     ensure  => file,
     content => template('fluentbit/fluent-bit-wrapper.sh.erb'),
