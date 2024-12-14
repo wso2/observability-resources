@@ -13,13 +13,12 @@
 # ================================================
 
 OS_TYPE=$(uname)
-if [ "$OS_TYPE" != "Darwin" ]; then
-    echo "This script is supported only on macOS."
-    exit 1
-fi
 
 # Base deployment directory
-DEPLOYMENT_DIR="$HOME/wso2_observability"
+DEPLOYMENT_DIR="/opt/wso2_observability"
+if [ "$OS_TYPE" == "Darwin" ]; then
+    DEPLOYMENT_DIR="$HOME/wso2_observability"
+fi
 
 # Ports to kill processes on
 PORTS=(8290 9101 9103)

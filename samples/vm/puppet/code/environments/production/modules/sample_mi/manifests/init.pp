@@ -3,7 +3,7 @@ class sample_mi inherits sample_mi::params {
   include common
   include common::java
 
-if $os == 'Debian' {
+if $os == "Debian" {
   package { 'unzip':
     ensure   => installed,
   }
