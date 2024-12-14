@@ -43,6 +43,30 @@
     Key log
 <% end %>
 
+<% if @mi_audit_logs_path != nil %>
+[INPUT]
+    Name tail
+    Path <%= @mi_audit_logs_path %>
+    Refresh_Interval 5
+    Tag wso2_mi_audit_logs
+    Buffer_Max_Size 10MB
+    Mem_Buf_Limit 256MB
+    Skip_Long_Lines On
+    Key log
+<% end %>
+
+<% if @mi_http_logs_path != nil %>
+[INPUT]
+    Name tail
+    Path <%= @mi_http_logs_path %>
+    Refresh_Interval 5
+    Tag wso2_mi_http_logs
+    Buffer_Max_Size 10MB
+    Mem_Buf_Limit 256MB
+    Skip_Long_Lines On
+    Key log
+<% end %>
+
 [FILTER]
     Name modify
     Match wso2_bal_logs
@@ -94,6 +118,12 @@
 
 [FILTER]
     Name   lua
+    Match  wso2_mi_metrics_logs
+    Script scripts.lua
+    Call   construct_mi_app_name
+
+[FILTER]
+    Name   lua
     Match  wso2_bal_logs
     Script scripts.lua
     Call   construct_bal_app_name
@@ -135,6 +165,38 @@
     Logstash_DateFormat %Y-%m-%d
     Logstash_Prefix wso2-integration-application-logs
     Match_regex ^wso2_(bal_logs|mi_app_logs)$
+    Port <%= @opensearch_port %>
+    Replace_Dots On
+    Suppress_Type_Name On
+    tls On
+    tls.verify Off
+    Trace_Error On
+
+[OUTPUT]
+    Name opensearch
+    Host <%= @opensearch_host %>
+    HTTP_Passwd <%= @opensearch_password %>
+    HTTP_User <%= @opensearch_user %>
+    Logstash_Format On
+    Logstash_DateFormat %Y-%m-%d
+    Logstash_Prefix wso2-integration-audit-logs
+    Match_regex ^wso2_(bal|mi)_audit_logs$
+    Port <%= @opensearch_port %>
+    Replace_Dots On
+    Suppress_Type_Name On
+    tls On
+    tls.verify Off
+    Trace_Error On
+
+[OUTPUT]
+    Name opensearch
+    Host <%= @opensearch_host %>
+    HTTP_Passwd <%= @opensearch_password %>
+    HTTP_User <%= @opensearch_user %>
+    Logstash_Format On
+    Logstash_DateFormat %Y-%m-%d
+    Logstash_Prefix wso2-integration-http-logs
+    Match_regex ^wso2_(bal|mi)_http_logs$
     Port <%= @opensearch_port %>
     Replace_Dots On
     Suppress_Type_Name On
