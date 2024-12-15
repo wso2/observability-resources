@@ -1,9 +1,9 @@
 #!/bin/bash
 
-CRM="../source/tmart/customers"
+CRM="../source/tmart/crm"
 INVENTORY="../source/tmart/inventory"
-SHIPMENT="../source/tmart/shipment"
-PORTAL="../source/tmart/tmart-portal"
+SHIPMENT="../source/tmart/shipments"
+PORTAL="../source/tmart/portal"
 MI_BOOKPARK="../source/tomsbooks/bookpark"
 
 docker pull --platform linux/amd64  ballerina/jvm-runtime:2.0
@@ -54,11 +54,11 @@ build_mi_project() {
 
     # Copy the metrics logging handler to the MI image. (This is a temporary workaround)
     cd - > /dev/null
-    cd integration-demo/extensions/metrics-handler/source || exit
+    cd ../source/extensions/metrics-handler/source || exit
     mvn clean package
     cd - > /dev/null
-    cp integration-demo/extensions/metrics-handler/source/target/mimetrics-1.0.0.jar integration-demo/extensions/metrics-handler/docker
-    cd integration-demo/extensions/metrics-handler/docker || exit
+    cp ../source/extensions/metrics-handler/source/target/mimetrics-1.0.0.jar ../source/extensions/metrics-handler/docker
+    cd ../source/extensions/metrics-handler/docker || exit
     export DOCKER_DEFAULT_PLATFORM=linux/amd64
     docker build -t bookpark-m:1.0.3 .
     

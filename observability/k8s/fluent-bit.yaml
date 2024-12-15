@@ -6,6 +6,42 @@ luaScripts:
             end
             return 1, timestamp, record
         end
+
+    construct_mi_app_name.lua: |
+        function construct_mi_app_name(tag, timestamp, record)
+            if record["kubernetes"] and record["kubernetes"]["labels"] and record["kubernetes"]["labels"]["app"] then
+                record["deployment"] = record["kubernetes"]["labels"]["app"]
+            else
+                record["deployment"] = nil
+            end
+
+            if record["deployment"] and record["package"] then
+                record["app"] = record["deployment"] .. " - " .. record["package"]
+            elseif record["deployment"] then
+                record["app"] = record["deployment"]
+            elseif record["package"] then
+                record["app"] = record["package"]
+            else
+                record["app"] = "unknown"
+            end
+            return 1, timestamp, record
+        end
+
+    construct_bal_app_name.lua: |
+        function construct_bal_app_name(tag, timestamp, record)
+            if record["kubernetes"] and record["kubernetes"]["labels"] and record["kubernetes"]["labels"]["app"] then
+                record["deployment"] = record["kubernetes"]["labels"]["app"]
+            else
+                record["deployment"] = nil
+            end
+
+            if record["deployment"] then
+                record["app"] = record["deployment"] .. " - " .. record["module"]
+            else
+                record["app"] = record["module"]
+            end
+            return 1, timestamp, record
+        end
     
     concat_fields.lua: |
         function concat_fields(tag, timestamp, record)
@@ -23,14 +59,14 @@ config:
         [PARSER]
             Name        wso2mi_carbon_parser
             Format      regex
-            Regex  ^(?<log_type>[A-Z]+) \[(?<time>[0-9-]{10} [0-9:,]{12})\]\s+(?<level>[A-Z]+)\s+\{(?<module>[^}]+)\}\s*(?:\[\s*Deployed From Artifact Container:\s+(?<package>[^\]]+)\s*\]\s*)?\s*(?:-\s+\{api:(?<api>[^}]+)\})?\s*(?<message>(.|\n)+)
+            Regex  ^(?<log_type>[A-Z]+) \[(?<time>[0-9-]{10} [0-9:,]{12})\]\s+(?<level>[A-Z]+)\s+\{(?<module>[^}]+)\}\s*(?:\[\s*Deployed From Artifact Container:\s+(?<package>[^\]]+)\s*\]\s*)?\s*(?:-\s+\{api:(?<integration>[^}]+)\})?\s*(?<message>(.|\n)+)
             Time_Key    time
             Time_Format %Y-%m-%d %H:%M:%S,%L
 
         [PARSER]
             Name        wso2mi_metrics_parser
             Format      regex
-            Regex       ^METRIC \[(?<time>[0-9-]{10} [0-9:,]{12})\] +INFO +\{METRICS_LOGGER\} - Response - (?<c_id>[^\|]+) \| (?<api_name>[^\|]+) \| (?<resource>[^\|]+) \| (?<method>[^\|]+) \| (?<response_time>[0-9]+) \| (?<status_code>[^\|]+)
+            Regex       ^METRIC \[(?<time>[0-9-]{10} [0-9:,]{12})\] +INFO +\{METRICS_LOGGER\}\s*(?:\[\s*Deployed From Artifact Container:\s+(?<package>[^\]]+)\s*\]\s*) - Response - (?<c_id>[^\|]+) \| (?<integration>[^\|]+) \| (?<sublevel>[^\|]+) \| (?<method>[^\|]+) \| (?<response_time>[0-9]+) \| (?<status>[^\|]+)
             Time_Key    time
             Time_Format %Y-%m-%d %H:%M:%S,%L
             Types       response_time:integer
@@ -144,6 +180,11 @@ config:
             Preserve_Key True
 
         [FILTER]
+            Name modify
+            Match wso2_mi_metrics_logs
+            Add protocol http
+
+        [FILTER]
             Name   lua
             Match  *
             Script /fluent-bit/scripts/concat_fields.lua
@@ -225,9 +266,15 @@ config:
 
         [FILTER]
             Name lua
-            Match wso2_*
-            script /fluent-bit/scripts/copy_app_name.lua
-            call copy_app_name
+            Match wso2_mi_*
+            script /fluent-bit/scripts/construct_mi_app_name.lua
+            call construct_mi_app_name
+
+        [FILTER]
+            Name lua
+            Match wso2_bal_*
+            script /fluent-bit/scripts/construct_bal_app_name.lua
+            call construct_bal_app_name
 
     outputs: |
         [OUTPUT]

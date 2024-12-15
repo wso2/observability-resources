@@ -24,7 +24,7 @@ echo "OpenSearch operator deployed successfully."
 
 # Deploy the OpenSearch cluster
 echo "Deploying the OpenSearch cluster..."
-kubectl apply -f deployment/opensearch.yaml
+kubectl apply -f opensearch.yaml
 if [[ $? -ne 0 ]]; then
   echo "ERROR: Failed to deploy the OpenSearch cluster."
   exit 1
@@ -63,7 +63,7 @@ echo "OpenSearch cluster deployed successfully."
 echo "Deploying Fluent Bit agent..."
 helm repo add fluent https://fluent.github.io/helm-charts
 helm repo update
-helm upgrade --install fluent-bit fluent/fluent-bit --version 0.43.0 -n observability -f deployment/fluent-bit.yaml
+helm upgrade --install fluent-bit fluent/fluent-bit --version 0.43.0 -n observability -f fluent-bit.yaml
 if [[ $? -ne 0 ]]; then
   echo "ERROR: Failed to deploy the Fluent Bit agent."
   exit 1
@@ -71,7 +71,7 @@ fi
 
 # Deploy Data Prepper
 # echo "Deploying Data Prepper..."
-helm install data-prepper deployment/data-prepper -n observability
+helm install data-prepper data-prepper -n observability
 
 echo "WSO2 observability resources deployed successfully."
 

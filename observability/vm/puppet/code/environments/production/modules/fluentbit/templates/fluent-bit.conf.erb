@@ -195,7 +195,7 @@
     HTTP_User <%= @opensearch_user %>
     Logstash_Format On
     Logstash_DateFormat %Y-%m-%d
-    Logstash_Prefix wso2-integration-http-logs
+    Logstash_Prefix wso2-integration-access-logs
     Match_regex ^wso2_(bal|mi)_http_logs$
     Port <%= @opensearch_port %>
     Replace_Dots On
