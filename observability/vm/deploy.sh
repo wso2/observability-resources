@@ -111,21 +111,21 @@ elif [ "$1" == "opensearch" ]; then
 
     install_puppet
     cd puppet/code
-    sudo puppet module install puppetlabs-apt --modulepath /opt/puppetlabs/puppet/modules/
+    puppet module install puppetlabs-apt --modulepath /opt/puppetlabs/puppet/modules/
     export FACTER_profile=opensearch
     puppet apply --environmentpath=environments --environment=production environments/production/manifests/site.pp
     echo "Opensearch deployed successfully."
 
 elif [ "$1" == "opensearch-dashboards" ]; then
 
-    if [ ! -f "$FILES_DIR"/opensearch_dashboards-2.*.tar.gz ]; then
+    if [ ! -f "$FILES_DIR"/opensearch-dashboards-2.*.tar.gz ]; then
         wget $OPENSEARCH_DASHBOARDS_DOWNLOAD_URL -P $FILES_DIR
     fi
     cp "$FILES_DIR"/opensearch_dashboards-2.*.tar.gz puppet/code/environments/production/modules/opensearch_dashboards/files/
 
     install_puppet
     cd puppet/code
-    sudo puppet module install puppetlabs-apt --modulepath /opt/puppetlabs/puppet/modules/
+    puppet module install puppetlabs-apt --modulepath /opt/puppetlabs/puppet/modules/
     export FACTER_profile=opensearch_dashboards
     puppet apply --environmentpath=environments --environment=production environments/production/manifests/site.pp
     echo "Opensearch Dashboards deployed successfully."
@@ -143,12 +143,12 @@ elif [ "$1" == "data-prepper" ]; then
 
     install_puppet
     cd puppet/code
-    sudo puppet module install puppetlabs-apt --modulepath /opt/puppetlabs/puppet/modules/
-    sudo puppet module install puppetlabs-docker --modulepath /opt/puppetlabs/puppet/modules/
+    puppet module install puppetlabs-apt --modulepath /opt/puppetlabs/puppet/modules/
+    puppet module install puppetlabs-docker --modulepath /opt/puppetlabs/puppet/modules/
     export FACTER_profile=data_prepper
     puppet apply --environmentpath=environments --environment=production environments/production/manifests/site.pp
     print "Data Prepper deployed successfully."
         
 else
-    rpint "Invalid option. Please refer the usage."
+    print "Invalid option. Please refer the usage."
 fi

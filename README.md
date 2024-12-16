@@ -98,12 +98,14 @@ sh deploy.sh local
 
 #### Deploying samples
 
-1. Navigate to the `<local_folder>/observability-resources/samples/kvm/` folder and execute the following command to build samples and copy binaries to relevant puppet locations:
+1. Download WSO2 Micro Integrator from [here](https://wso2.com/integrator/micro-integrator/) and copy the zip file to the `<local_folder>/observability-resources/files/` folder.
+
+2. Navigate to the `<local_folder>/observability-resources/samples/kvm/` folder and execute the following command to build samples and copy binaries to relevant puppet locations:
 ```
 sh deploy.sh prepare
 ```
 
-2. Run the following command to deploy samples on the local machine:
+3. Run the following command to deploy samples on the local machine:
 ```
 sh deploy.sh local
 ```
