@@ -40,9 +40,10 @@ class fluentbit inherits fluentbit::params {
     notify { 'Installing Fluent Bit on Darwin': }
 
     exec { 'install fluent-bit':
-      command => 'brew install fluent-bit',
-      path    => $path,
-      unless  => 'fluent-bit --version | grep "Fluent Bit"',
+      command     => 'brew install fluent-bit',
+      path        => $path,
+      environment => ["HOME=${darwin_home}"],
+      unless      => 'fluent-bit --version | grep "Fluent Bit"',
     }
   }
 

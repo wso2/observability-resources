@@ -230,6 +230,14 @@ if [ "$1" == "local" ]; then
     export FACTER_profile=sample_bal_inventory
     puppet apply --environmentpath=environments --environment=production environments/production/manifests/site.pp
 
+    print_message "Deploying Ballerina project - CRM"
+    export FACTER_profile=sample_bal_crm
+    puppet apply --environmentpath=environments --environment=production environments/production/manifests/site.pp
+
+    print_message "Deploying Ballerina project - Portal"
+    export FACTER_profile=sample_bal_portal
+    puppet apply --environmentpath=environments --environment=production environments/production/manifests/site.pp
+
     print_message "Deploying Micro Integrator"
     export FACTER_profile=sample_mi
     puppet apply --environmentpath=environments --environment=production environments/production/manifests/site.pp

@@ -26,7 +26,8 @@
             <call>
 				<endpoint>
                     <http method="POST"
-                        uri-template="http://bookpark-svc:8290/binventory/allocations" />
+                        uri-template="http://localhost:8290/binventory/allocations" />
+                    <!-- <http method="POST" uri-template="http://bookpark-svc:8290/binventory/allocations" /> -->
                 </endpoint>
             </call>
 
@@ -41,7 +42,8 @@
             </payloadFactory>
             <call>
                 <endpoint>
-                    <http method="POST" uri-template="http://shipments-svc:9101/logistics/shipments" />
+                    <http method="POST" uri-template="http://localhost:9101/logistics/shipments" />
+                    <!-- <http method="POST" uri-template="http://shipments-svc:9101/logistics/shipments" /> -->
                 </endpoint>
             </call>
 

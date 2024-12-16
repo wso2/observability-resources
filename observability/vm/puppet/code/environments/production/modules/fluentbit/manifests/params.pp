@@ -9,7 +9,7 @@ class fluentbit::params inherits o11y_common::params {
   $opensearch_password = 'Observer_123'
 
   $bal_logs_path = "${deployment_dir}/bal_apps/shipments/logs/app.log"
-  $bal_log_paths = ["${deployment_dir}/bal_apps/shipments/logs/app.log", "${deployment_dir}/bal_apps/inventory/logs/app.log"]
+  $bal_log_paths = ["${deployment_dir}/bal_apps/shipments/logs/app.log", "${deployment_dir}/bal_apps/inventory/logs/app.log", "${deployment_dir}/bal_apps/crm/logs/app.log", "${deployment_dir}/bal_apps/portal/logs/app.log"]
 
   $mi_version = "4.3.0"
   $mi_logs_path = "${deployment_dir}/mi/wso2mi-${mi_version}/repository/logs"

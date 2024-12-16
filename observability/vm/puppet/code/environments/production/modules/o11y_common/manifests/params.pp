@@ -18,6 +18,7 @@ if $os == 'Darwin' {
   $deploy_user = $facts['identity']['user']
   $deploy_group = $facts['identity']['group']
   $deployment_dir = "/Users/${deploy_user}/wso2_observability"
+  $darwin_home = "/Users/${deploy_user}"
   $demo = true
 } elsif $os == 'Debian' {
   $user_id = 802

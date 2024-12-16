@@ -134,7 +134,7 @@ elif [ "$1" == "fluentbit" ]; then
     
     install_puppet
     cd puppet/code
-    sudo puppet module install puppetlabs-apt --modulepath /opt/puppetlabs/puppet/modules/
+    puppet module install puppetlabs-apt --modulepath /opt/puppetlabs/puppet/modules/
     export FACTER_profile=fluentbit
     puppet apply --environmentpath=environments --environment=production environments/production/manifests/site.pp
     echo "Fluent Bit deployed successfully."

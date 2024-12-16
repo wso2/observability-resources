@@ -41,9 +41,11 @@ class sample_bal_inventory inherits sample_bal_inventory::params {
     mode    => '0644',
   }
 
+if $os == 'Darwin' {
   exec { 'run_bal_sales_sample':
     command     => "nohup java -jar ${app_dir}/inventory.jar > ${app_logs_dir}/app.log 2>&1 &",
     path        => ['/bin', '/usr/bin'],
     environment => ["BAL_CONFIG_FILES=${app_dir}/Config.toml"],
   }
+}
 }

@@ -1,0 +1,13 @@
+<% if @o11y_tracing == true %>
+[ballerina.observe]
+tracingEnabled=true
+tracingProvider="jaeger"
+
+[ballerinax.jaeger]
+agentHostname="<%= @data_prepper_host %>"
+agentPort=4317
+samplerType="const"
+samplerParam=1.0
+reporterFlushInterval=2000
+reporterBufferSize=1000
+<% end %>
