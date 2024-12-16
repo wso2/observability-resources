@@ -1,0 +1,16 @@
+---
+version: '3'
+services:
+  data-prepper-node:
+    image: opensearchproject/data-prepper:latest
+    container_name: data-prepper-node
+    ports:
+      - 8021:8021
+      - <%= @otel_trace_port %>:<%= @otel_trace_port %>
+    volumes:
+      - <%= @data_prepper_dir %>/pipelines.yaml:/usr/share/data-prepper/pipelines/pipelines.yaml
+    networks:
+      - opensearch-net
+
+networks:
+  opensearch-net:

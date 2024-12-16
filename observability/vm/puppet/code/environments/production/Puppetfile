@@ -1,0 +1,6 @@
+# Specify the source for Forge modules
+forge 'https://forge.puppet.com'
+
+mod 'puppetlabs-stdlib', '9.6.0'
+
+mod 'puppetlabs-apt', '9.4.0'

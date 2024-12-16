@@ -1,0 +1,54 @@
+{
+    "index_patterns": [
+        "wso2-integration-metrics-logs-*"
+    ],
+    "template": {
+        "mappings": {
+            "properties": {
+                "kubernetes": {
+                    "type": "object",
+                    "properties": {
+                        "labels": {
+                            "type": "object",
+                            "properties": {
+                                "app": {
+                                    "type": "keyword"
+                                },
+                                "component": {
+                                    "type": "keyword"
+                                }
+                            }
+                        }
+                    }
+                },
+                "time": {
+                    "type": "date"
+                },
+                "protocol": {
+                    "type": "keyword"
+                },
+                "integration": {
+                    "type": "keyword"
+                },
+                "sublevel": {
+                    "type": "keyword"
+                },
+                "app": {
+                    "type": "keyword"
+                },
+                "product": {
+                    "type": "keyword"
+                },
+                "component": {
+                    "type": "keyword"
+                },
+                "status": {
+                    "type": "keyword"
+                },
+                "response_time": {
+                    "type": "integer"
+                }
+            }
+        }
+    }
+}

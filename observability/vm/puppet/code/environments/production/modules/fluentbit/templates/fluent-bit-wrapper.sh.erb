@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Check if the DEPLOYMENT environment variable is set
+if [ -z "$DEPLOYMENT" ]; then
+  export DEPLOYMENT="<%= @deployment_name %>"
+fi
+
+# Print the value of DEPLOYMENT for confirmation
+echo "DEPLOYMENT is set to: $DEPLOYMENT"
+
+# Execute the Fluent Bit command
+<% if @os == 'Darwin' %>
+nohup fluent-bit -c <%= @config_path %> > <%= @deployment_dir %>/fluentbit/logs/fluentbit.log 2>&1 &
+<% end %>
+<% if @os == 'Debian' %>
+fluent-bit -c <%= @config_path %> > <%= @deployment_dir %>/fluentbit/logs/fluentbit.log 2>&1
+<% end %>
+
+echo "Fluent Bit started with config: <%= @config_path %>, logs at: <%= @deployment_dir %>/fluentbit/logs/fluentbit.log"

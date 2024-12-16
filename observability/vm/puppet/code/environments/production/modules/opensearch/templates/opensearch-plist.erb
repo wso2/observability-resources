@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" 
+    "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>Label</key>
+    <string><%= @label %></string>
+    
+    <key>ProgramArguments</key>
+    <array>
+      <string><%= @program %></string>
+      <% @program_arguments.each do |arg| %>
+      <string><%= arg %></string>
+      <% end %>
+    </array>
+    
+    <key>RunAtLoad</key>
+    <%= @run_at_load ? '<true/>' : '<false/>' %>
+    
+    <key>KeepAlive</key>
+    <%= @keep_alive ? '<true/>' : '<false/>' %>
+    
+    <key>WorkingDirectory</key>
+    <string><%= @working_directory %></string>
+    
+    <key>StandardOutPath</key>
+    <string><%= @standard_out_path %></string>
+    
+    <key>StandardErrorPath</key>
+    <string><%= @standard_error_path %></string>
+    
+    <% if @environment_variables && !@environment_variables.empty? %>
+    <key>EnvironmentVariables</key>
+    <dict>
+      <% @environment_variables.each do |key, value| %>
+      <key><%= key %></key>
+      <string><%= value %></string>
+      <% end %>
+    </dict>
+    <% end %>
+  </dict>
+</plist>

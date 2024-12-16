@@ -1,0 +1,490 @@
+luaScripts:
+    copy_app_name.lua: |
+        function copy_app_name(tag, timestamp, record)
+            if record["kubernetes"] and record["kubernetes"]["labels"] and record["kubernetes"]["labels"]["app"] then
+                record["app"] = record["kubernetes"]["labels"]["app"]
+            end
+            return 1, timestamp, record
+        end
+
+    construct_mi_app_name.lua: |
+        function construct_mi_app_name(tag, timestamp, record)
+            if record["kubernetes"] and record["kubernetes"]["labels"] and record["kubernetes"]["labels"]["app"] then
+                record["deployment"] = record["kubernetes"]["labels"]["app"]
+            else
+                record["deployment"] = nil
+            end
+
+            if record["deployment"] and record["package"] then
+                record["app"] = record["deployment"] .. " - " .. record["package"]
+            elseif record["deployment"] then
+                record["app"] = record["deployment"]
+            elseif record["package"] then
+                record["app"] = record["package"]
+            else
+                record["app"] = "unknown"
+            end
+            return 1, timestamp, record
+        end
+
+    construct_bal_app_name.lua: |
+        function construct_bal_app_name(tag, timestamp, record)
+            if record["kubernetes"] and record["kubernetes"]["labels"] and record["kubernetes"]["labels"]["app"] then
+                record["deployment"] = record["kubernetes"]["labels"]["app"]
+            else
+                record["deployment"] = nil
+            end
+
+            if record["deployment"] then
+                record["app"] = record["deployment"] .. " - " .. record["module"]
+            else
+                record["app"] = record["module"]
+            end
+            return 1, timestamp, record
+        end
+    
+    concat_fields.lua: |
+        function concat_fields(tag, timestamp, record)
+            local resource_path = (record["api_name"] or "") .. (record["resource"] or "") .. " " .. (record["method"] or "")
+            record["resource_path"] = resource_path
+            return 1, timestamp, record
+        end
+
+config:
+    customParsers: |
+        [PARSER]
+            Name        bal_parser
+            Format      logfmt
+
+        [PARSER]
+            Name        wso2mi_carbon_parser
+            Format      regex
+            Regex  ^(?<log_type>[A-Z]+) \[(?<time>[0-9-]{10} [0-9:,]{12})\]\s+(?<level>[A-Z]+)\s+\{(?<module>[^}]+)\}\s*(?:\[\s*Deployed From Artifact Container:\s+(?<package>[^\]]+)\s*\]\s*)?\s*(?:-\s+\{api:(?<integration>[^}]+)\})?\s*(?<message>(.|\n)+)
+            Time_Key    time
+            Time_Format %Y-%m-%d %H:%M:%S,%L
+
+        [PARSER]
+            Name        wso2mi_metrics_parser
+            Format      regex
+            Regex       ^METRIC \[(?<time>[0-9-]{10} [0-9:,]{12})\] +INFO +\{METRICS_LOGGER\}\s*(?:\[\s*Deployed From Artifact Container:\s+(?<package>[^\]]+)\s*\]\s*) - Response - (?<c_id>[^\|]+) \| (?<integration>[^\|]+) \| (?<sublevel>[^\|]+) \| (?<method>[^\|]+) \| (?<response_time>[0-9]+) \| (?<status>[^\|]+)
+            Time_Key    time
+            Time_Format %Y-%m-%d %H:%M:%S,%L
+            Types       response_time:integer
+
+        [PARSER]
+            Name   wso2apim_carbon_parser
+            Format regex
+            Regex  ^(?<log_type>[A-Z]+) \[(?<time>[0-9-]{10} [0-9:,]{12})\]\s+(?<level>[A-Z]+)\s+\{(?<module>[^}]+)\}\s*(?:\[\s*Deployed From Artifact Container:\s+(?<package>[^\]]+)\s*\]\s*)?\s*(?:-\s+\{api:(?<api>[^}]+)\})?\s*(?<message>(.|\n)+)
+            Time_Key   time
+            Time_Format %Y-%m-%d %H:%M:%S,%L
+
+        [MULTILINE_PARSER]
+            name          wso2_multiline_parser
+            type          regex
+            flush_timeout 1000
+            rule          "start_state"   "^CARBON.*"   "cont"
+            rule          "cont"          "^(?!CARBON|CREL|AUDIT|HTTP|TRACE|METRIC).*" "cont"
+
+    inputs: |
+        [INPUT]
+            Name tail
+            Inotify_Watcher false
+            Path /var/log/containers/*.log
+            Refresh_Interval 5
+            Tag kube.*
+            Buffer_Max_Size 10MB
+            Mem_Buf_Limit 256MB
+            Skip_Long_Lines On
+            Key keyfromtail
+            multiline.parser docker, cri
+
+    filters: |
+        [FILTER]
+            Name kubernetes
+            Buffer_Size 32MB
+            K8S-Logging.Parser Off
+            K8S-Logging.Exclude Off
+            Match kube.*
+            tls.verify Off
+            Use_Kubelet false
+            Keep_Log On
+            Merge_Log On
+            Labels On
+            Annotations On
+            Merge_Log_Key processed
+
+        [FILTER]
+            name multiline
+            match kube.*
+            multiline.key_content log
+            multiline.parser wso2_multiline_parser
+
+        [FILTER]
+            Name rewrite_tag
+            Match kube.*
+            Rule $kubernetes['labels']['component'] wso2ballerina wso2_bal_logs false
+            Emitter_Name re_emitted_wso2
+
+        [FILTER]
+            Name parser
+            Match wso2_bal_logs
+            Key_Name log
+            Parser bal_parser
+            Reserve_Data True
+            Preserve_Key True
+
+        [FILTER]
+            Name modify
+            Match wso2_bal_logs
+            Add product integration
+            Add component ballerina
+
+        [FILTER]
+            Name rewrite_tag
+            Match kube.*
+            Rule $kubernetes['labels']['component'] wso2mi wso2_mi_logs false
+            Emitter_Name re_emitted_mi
+
+        [FILTER]
+            Name modify
+            Match wso2_mi_logs
+            Add product integration
+            Add component mi
+
+        [FILTER]
+            Name rewrite_tag
+            Match wso2_mi_logs
+            Rule $log ^CARBON wso2_mi_carbon_logs false
+            Emitter_Name re_emitted_mi_carbon
+
+        [FILTER]
+            Name parser
+            Match wso2_mi_carbon_logs
+            Key_Name log
+            Parser wso2mi_carbon_parser
+            Reserve_Data True
+            Preserve_Key True
+
+        [FILTER]
+            Name rewrite_tag
+            Match wso2_mi_logs
+            Rule $log ^METRIC wso2_mi_metrics_logs false
+            Emitter_Name re_emitted_mi_metrics
+
+        [FILTER]
+            Name parser
+            Match wso2_mi_metrics_logs
+            Key_Name log
+            Parser wso2mi_metrics_parser
+            Reserve_Data True
+            Preserve_Key True
+
+        [FILTER]
+            Name modify
+            Match wso2_mi_metrics_logs
+            Add protocol http
+
+        [FILTER]
+            Name   lua
+            Match  *
+            Script /fluent-bit/scripts/concat_fields.lua
+            Call   concat_fields
+
+        [FILTER]
+            Name rewrite_tag
+            Match wso2_mi_logs
+            Rule $log ^HTTP wso2_mi_http_logs false
+            Emitter_Name re_emitted_mi_http
+
+        [FILTER]
+            Name rewrite_tag
+            Match wso2_mi_logs
+            Rule $log ^AUDIT wso2_mi_audit_logs false
+            Emitter_Name re_emitted_mi_audit
+
+        [FILTER]
+            Name rewrite_tag
+            Match wso2_mi_logs
+            Rule $log ^CREL wso2_mi_correlation_logs false
+            Emitter_Name re_emitted_mi_correlation
+
+        [FILTER]
+            Name rewrite_tag
+            Match wso2_mi_logs
+            Rule $log ^TRACE wso2_mi_trace_logs false
+            Emitter_Name re_emitted_mi_trace
+
+        [FILTER]
+            Name rewrite_tag
+            Match kube.*
+            Rule $kubernetes['labels']['component'] wso2apim wso2_apim_logs false
+            Emitter_Name re_emitted_apim
+
+        [FILTER]
+            Name modify
+            Match wso2_apim_logs
+            Add product api-management
+            Add component apim
+
+        [FILTER]
+            Name rewrite_tag
+            Match wso2_apim_logs
+            Rule $log ^CARBON wso2_apim_carbon_logs false
+            Emitter_Name re_emitted_apim_carbon
+
+        [FILTER]
+            Name parser
+            Match wso2_apim_carbon_logs
+            Key_Name log
+            Parser wso2apim_carbon_parser
+            Reserve_Data True
+            Preserve_Key True
+
+        [FILTER]
+            Name rewrite_tag
+            Match wso2_apim_logs
+            Rule $log ^HTTP wso2_apim_http_logs false
+            Emitter_Name re_emitted_apim_http
+
+        [FILTER]
+            Name rewrite_tag
+            Match wso2_apim_logs
+            Rule $log ^AUDIT wso2_apim_audit_logs false
+            Emitter_Name re_emitted_apim_audit
+
+        [FILTER]
+            Name rewrite_tag
+            Match wso2_apim_logs
+            Rule $log ^CREL wso2_apim_correlation_logs false
+            Emitter_Name re_emitted_apim_correlation
+
+        [FILTER]
+            Name rewrite_tag
+            Match wso2_apim_logs
+            Rule $log ^TRACE wso2_apim_trace_logs false
+            Emitter_Name re_emitted_apim_trace
+
+        [FILTER]
+            Name lua
+            Match wso2_mi_*
+            script /fluent-bit/scripts/construct_mi_app_name.lua
+            call construct_mi_app_name
+
+        [FILTER]
+            Name lua
+            Match wso2_bal_*
+            script /fluent-bit/scripts/construct_bal_app_name.lua
+            call construct_bal_app_name
+
+    outputs: |
+        [OUTPUT]
+            Name opensearch
+            Host opensearch-data
+            HTTP_Passwd admin
+            HTTP_User admin
+            Logstash_Format On
+            Logstash_DateFormat %Y-%m-%d
+            Logstash_Prefix wso2-integration-application-logs
+            Match_regex ^wso2_(mi_carbon_logs|bal_logs)$
+            Port 9200
+            Replace_Dots On
+            Suppress_Type_Name On
+            tls On
+            tls.verify Off
+            Trace_Error On
+
+        [OUTPUT]
+            Name opensearch
+            Host opensearch-data
+            HTTP_Passwd admin
+            HTTP_User admin
+            Logstash_Format On
+            Logstash_DateFormat %Y-%m-%d
+            Logstash_Prefix wso2-integration-metrics-logs
+            Match wso2_mi_metrics_logs
+            Port 9200
+            Replace_Dots On
+            Suppress_Type_Name On
+            tls On
+            tls.verify Off
+            Trace_Error On
+
+        [OUTPUT]
+            Name opensearch
+            Host opensearch-data
+            HTTP_Passwd admin
+            HTTP_User admin
+            Logstash_Format On
+            Logstash_DateFormat %Y-%m-%d
+            Logstash_Prefix wso2-apim-application-logs
+            Match wso2_apim_carbon_logs
+            Port 9200
+            Replace_Dots On
+            Suppress_Type_Name On
+            tls On
+            tls.verify Off
+            Trace_Error On
+
+        [OUTPUT]
+            Name opensearch
+            Host opensearch-data
+            HTTP_Passwd admin
+            HTTP_User admin
+            Logstash_Format On
+            Logstash_DateFormat %Y-%m-%d
+            Logstash_Prefix wso2-integration-access-logs
+            Match wso2_mi_http_logs
+            Port 9200
+            Replace_Dots On
+            Suppress_Type_Name On
+            tls On
+            tls.verify Off
+            Trace_Error On
+
+        [OUTPUT]
+            Name opensearch
+            Host opensearch-data
+            HTTP_Passwd admin
+            HTTP_User admin
+            Logstash_Format On
+            Logstash_DateFormat %Y-%m-%d
+            Logstash_Prefix wso2-apim-access-logs
+            Match wso2_apim_http_logs
+            Port 9200
+            Replace_Dots On
+            Suppress_Type_Name On
+            tls On
+            tls.verify Off
+            Trace_Error On
+
+        [OUTPUT]
+            Name opensearch
+            Host opensearch-data
+            HTTP_Passwd admin
+            HTTP_User admin
+            Logstash_Format On
+            Logstash_DateFormat %Y-%m-%d
+            Logstash_Prefix wso2-integration-correlation-logs
+            Match wso2_mi_correlation_logs
+            Port 9200
+            Replace_Dots On
+            Suppress_Type_Name On
+            tls On
+            tls.verify Off
+            Trace_Error On
+
+        [OUTPUT]
+            Name opensearch
+            Host opensearch-data
+            HTTP_Passwd admin
+            HTTP_User admin
+            Logstash_Format On
+            Logstash_DateFormat %Y-%m-%d
+            Logstash_Prefix wso2-apim-correlation-logs
+            Match wso2_apim_correlation_logs
+            Port 9200
+            Replace_Dots On
+            Suppress_Type_Name On
+            tls On
+            tls.verify Off
+            Trace_Error On
+
+        [OUTPUT]
+            Name opensearch
+            Host opensearch-data
+            HTTP_Passwd admin
+            HTTP_User admin
+            Logstash_Format On
+            Logstash_DateFormat %Y-%m-%d
+            Logstash_Prefix wso2-integration-trace-logs
+            Match wso2_mi_trace_logs
+            Port 9200
+            Replace_Dots On
+            Suppress_Type_Name On
+            tls On
+            tls.verify Off
+            Trace_Error On
+
+        [OUTPUT]
+            Name opensearch
+            Host opensearch-data
+            HTTP_Passwd admin
+            HTTP_User admin
+            Logstash_Format On
+            Logstash_DateFormat %Y-%m-%d
+            Logstash_Prefix wso2-apim-trace-logs
+            Match wso2_apim_trace_logs
+            Port 9200
+            Replace_Dots On
+            Suppress_Type_Name On
+            tls On
+            tls.verify Off
+            Trace_Error On
+
+        [OUTPUT]
+            Name opensearch
+            Host opensearch-data
+            HTTP_Passwd admin
+            HTTP_User admin
+            Logstash_Format On
+            Logstash_DateFormat %Y-%m-%d
+            Logstash_Prefix wso2-integration-audit-logs
+            Match wso2_mi_audit_logs
+            Port 9200
+            Replace_Dots On
+            Suppress_Type_Name On
+            tls On
+            tls.verify Off
+            Trace_Error On
+
+        [OUTPUT]
+            Name opensearch
+            Host opensearch-data
+            HTTP_Passwd admin
+            HTTP_User admin
+            Logstash_Format On
+            Logstash_DateFormat %Y-%m-%d
+            Logstash_Prefix wso2-apim-audit-logs
+            Match wso2_apim_audit_logs
+            Port 9200
+            Replace_Dots On
+            Suppress_Type_Name On
+            tls On
+            tls.verify Off
+            Trace_Error On
+
+        [OUTPUT]
+            Name opensearch
+            Host opensearch-data
+            HTTP_Passwd admin
+            HTTP_User admin
+            Logstash_Format On
+            Logstash_DateFormat %Y-%m-%d
+            Logstash_Prefix wso2-general-logs
+            Match_regex ^wso2.*
+            Port 9200
+            Replace_Dots On
+            Suppress_Type_Name On
+            tls On
+            tls.verify Off
+            Trace_Error On
+
+        [OUTPUT]
+            Name opensearch
+            Host opensearch-data
+            HTTP_Passwd admin
+            HTTP_User admin
+            Logstash_Format On
+            Logstash_DateFormat %Y-%m-%d
+            Logstash_Prefix general-logs
+            Match kube.*
+            Port 9200
+            Replace_Dots On
+            Suppress_Type_Name On
+            tls On
+            tls.verify Off
+            Trace_Error On
+
+dnsPolicy: ClusterFirstWithHostNet
+
+hostNetwork: true

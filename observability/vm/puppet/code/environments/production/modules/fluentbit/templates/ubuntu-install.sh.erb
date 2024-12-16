@@ -1,0 +1,9 @@
+CODENAME=<%= @os_codename %>
+
+sudo bash -c 'curl https://packages.fluentbit.io/fluentbit.key | gpg --dearmor > /usr/share/keyrings/fluentbit-keyring.gpg'
+
+echo "deb [signed-by=/usr/share/keyrings/fluentbit-keyring.gpg] https://packages.fluentbit.io/ubuntu/${CODENAME} ${CODENAME} main" | sudo tee /etc/apt/sources.list.d/fluentbit.list
+
+sudo apt-get update
+
+sudo apt-get install fluent-bit
