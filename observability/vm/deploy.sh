@@ -74,8 +74,8 @@ if [ "$1" == "local" ]; then
 
     install_puppet
     cd puppet/code
-    puppet module install puppetlabs-apt --modulepath /opt/puppetlabs/puppet/modules/
-    puppet module install puppetlabs-docker --modulepath /opt/puppetlabs/puppet/modules/
+    puppet module install puppetlabs-apt --version 9.4.0 --modulepath /opt/puppetlabs/puppet/modules/
+    puppet module install puppetlabs-docker --version 10.0.1 --modulepath /opt/puppetlabs/puppet/modules/
 
     print "Installing Opensearch..."
     export FACTER_profile=opensearch
@@ -111,7 +111,7 @@ elif [ "$1" == "opensearch" ]; then
 
     install_puppet
     cd puppet/code
-    puppet module install puppetlabs-apt --modulepath /opt/puppetlabs/puppet/modules/
+    puppet module install puppetlabs-apt --version 9.4.0 --modulepath /opt/puppetlabs/puppet/modules/
     export FACTER_profile=opensearch
     puppet apply --environmentpath=environments --environment=production environments/production/manifests/site.pp
     echo "Opensearch deployed successfully."
@@ -125,7 +125,7 @@ elif [ "$1" == "opensearch-dashboards" ]; then
 
     install_puppet
     cd puppet/code
-    puppet module install puppetlabs-apt --modulepath /opt/puppetlabs/puppet/modules/
+    puppet module install puppetlabs-apt --version 9.4.0 --modulepath /opt/puppetlabs/puppet/modules/
     export FACTER_profile=opensearch_dashboards
     puppet apply --environmentpath=environments --environment=production environments/production/manifests/site.pp
     echo "Opensearch Dashboards deployed successfully."
@@ -134,7 +134,7 @@ elif [ "$1" == "fluentbit" ]; then
     
     install_puppet
     cd puppet/code
-    puppet module install puppetlabs-apt --modulepath /opt/puppetlabs/puppet/modules/
+    puppet module install puppetlabs-apt --version 9.4.0 --modulepath /opt/puppetlabs/puppet/modules/
     export FACTER_profile=fluentbit
     puppet apply --environmentpath=environments --environment=production environments/production/manifests/site.pp
     echo "Fluent Bit deployed successfully."
@@ -143,8 +143,8 @@ elif [ "$1" == "data-prepper" ]; then
 
     install_puppet
     cd puppet/code
-    puppet module install puppetlabs-apt --modulepath /opt/puppetlabs/puppet/modules/
-    puppet module install puppetlabs-docker --modulepath /opt/puppetlabs/puppet/modules/
+    puppet module install puppetlabs-apt --version 9.4.0 --modulepath /opt/puppetlabs/puppet/modules/
+    puppet module install puppetlabs-docker --version 10.0.1 --modulepath /opt/puppetlabs/puppet/modules/
     export FACTER_profile=data_prepper
     puppet apply --environmentpath=environments --environment=production environments/production/manifests/site.pp
     print "Data Prepper deployed successfully."
