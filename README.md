@@ -69,6 +69,8 @@ The following prerequisites are needed for deployments on Mac OS.
 
 - **Maven:** [Download](https://maven.apache.org/download.cgi) and [install](https://maven.apache.org/install.html) the Maven build system.
 
+- **wget:** Install wget using the relevant package manager. E.g. for Mac OS: `brew install wget`
+
 - **Postman:** Download and install the [Postman](https://www.postman.com/downloads/) client for invoking sample APIs. 
 
 #### Deploying the observability solution
