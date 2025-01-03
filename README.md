@@ -80,9 +80,15 @@ Once the prerequisites are setup, the observability solution can be deployed by 
 1. Clone [this](https://github.com/wso2/observability-resources) repository to a local folder.
 
 2. Navigate to the `<local_folder>/observability-resources/observability/vm/` folder and execute the installation script using the following command.
-```
-sh deploy.sh local
-```
+
+ - Mac OS
+    ```
+    sh deploy.sh local
+    ```
+ - Linux (Observability components will be installed as services in Linux. Therefore, `sudo` access is required.)
+    ```
+    sudo -E sh deploy.sh local
+    ```
 
     Local deployment deploys all components of the observability solution in a single VM. For production deployments, it is recommended to deploy each component in a separate VM by executing deploy.sh followed by the component name as follows:
         - Install OpenSearch: `sh deploy.sh opensearch`
