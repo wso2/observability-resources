@@ -62,6 +62,14 @@ The following prerequisites are needed for deployments on Mac OS.
 >The provided deployment script will check and install missing prerequisites automatically on Debian-based environments.
 
 - **Puppet:** [Puppet](https://www.puppet.com/docs/puppet/8/install_agents#install_agents) is used as the deployment automation system for VM-based deployments.
+    - Install the puppetlabs-apt module via
+        ```
+        puppet module install puppetlabs-apt --version 9.4.0 --modulepath /opt/puppetlabs/puppet/modules/
+        ```
+    - Install the puppetlabs-docker module via
+        ```
+        puppet module install puppetlabs-docker --version 10.0.1 --modulepath /opt/puppetlabs/puppet/modules/
+        ```
 
 - **JDK 17:** Install [Java Development Kit 17](https://jdk.java.net/archive/)
 

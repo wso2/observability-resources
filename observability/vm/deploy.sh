@@ -58,6 +58,11 @@ if [ "$1" == "local" ]; then
             wget $JAVA_DOWNLOAD_URL -P $FILES_DIR
         fi
         cp "$FILES_DIR"/openjdk-17*.tar.gz puppet/code/environments/production/modules/o11y_common/files/
+
+        install_puppet
+        cd puppet/code
+        puppet module install puppetlabs-apt --version 9.4.0 --modulepath /opt/puppetlabs/puppet/modules/
+        puppet module install puppetlabs-docker --version 10.0.1 --modulepath /opt/puppetlabs/puppet/modules/
     fi
 
     if [ ! -f "$FILES_DIR"/opensearch-2.*.tar.gz ]; then
@@ -71,11 +76,6 @@ if [ "$1" == "local" ]; then
         wget $OPENSEARCH_DASHBOARDS_DOWNLOAD_URL -P $FILES_DIR
     fi
     cp "$FILES_DIR"/opensearch-dashboards-2.*.tar.gz puppet/code/environments/production/modules/opensearch_dashboards/files/
-
-    install_puppet
-    cd puppet/code
-    puppet module install puppetlabs-apt --version 9.4.0 --modulepath /opt/puppetlabs/puppet/modules/
-    puppet module install puppetlabs-docker --version 10.0.1 --modulepath /opt/puppetlabs/puppet/modules/
 
     print "Installing Opensearch..."
     export FACTER_profile=opensearch
@@ -102,6 +102,10 @@ elif [ "$1" == "opensearch" ]; then
             wget $JAVA_DOWNLOAD_URL -P $FILES_DIR
         fi
         cp "$FILES_DIR"/openjdk-17*.tar.gz puppet/code/environments/production/modules/o11y_common/files/
+
+        install_puppet
+        cd puppet/code
+        puppet module install puppetlabs-apt --version 9.4.0 --modulepath /opt/puppetlabs/puppet/modules/
     fi
 
     if [ ! -f "$FILES_DIR"/opensearch-2.*.tar.gz ]; then
@@ -109,42 +113,48 @@ elif [ "$1" == "opensearch" ]; then
     fi
     cp "$FILES_DIR"/opensearch-2.*.tar.gz puppet/code/environments/production/modules/opensearch/files/
 
-    install_puppet
-    cd puppet/code
-    puppet module install puppetlabs-apt --version 9.4.0 --modulepath /opt/puppetlabs/puppet/modules/
     export FACTER_profile=opensearch
     puppet apply --environmentpath=environments --environment=production environments/production/manifests/site.pp
     echo "Opensearch deployed successfully."
 
 elif [ "$1" == "opensearch-dashboards" ]; then
 
+    if [ $OS_TYPE != "Darwin" ]; then
+        install_puppet
+        cd puppet/code
+        puppet module install puppetlabs-apt --version 9.4.0 --modulepath /opt/puppetlabs/puppet/modules/
+    fi
+
     if [ ! -f "$FILES_DIR"/opensearch-dashboards-2.*.tar.gz ]; then
         wget $OPENSEARCH_DASHBOARDS_DOWNLOAD_URL -P $FILES_DIR
     fi
     cp "$FILES_DIR"/opensearch_dashboards-2.*.tar.gz puppet/code/environments/production/modules/opensearch_dashboards/files/
 
-    install_puppet
-    cd puppet/code
-    puppet module install puppetlabs-apt --version 9.4.0 --modulepath /opt/puppetlabs/puppet/modules/
     export FACTER_profile=opensearch_dashboards
     puppet apply --environmentpath=environments --environment=production environments/production/manifests/site.pp
     echo "Opensearch Dashboards deployed successfully."
 
 elif [ "$1" == "fluentbit" ]; then
+
+    if [ $OS_TYPE != "Darwin" ]; then
+        install_puppet
+        cd puppet/code
+        puppet module install puppetlabs-apt --version 9.4.0 --modulepath /opt/puppetlabs/puppet/modules/
+    fi
     
-    install_puppet
-    cd puppet/code
-    puppet module install puppetlabs-apt --version 9.4.0 --modulepath /opt/puppetlabs/puppet/modules/
     export FACTER_profile=fluentbit
     puppet apply --environmentpath=environments --environment=production environments/production/manifests/site.pp
     echo "Fluent Bit deployed successfully."
     
 elif [ "$1" == "data-prepper" ]; then
 
-    install_puppet
-    cd puppet/code
-    puppet module install puppetlabs-apt --version 9.4.0 --modulepath /opt/puppetlabs/puppet/modules/
-    puppet module install puppetlabs-docker --version 10.0.1 --modulepath /opt/puppetlabs/puppet/modules/
+    if [ $OS_TYPE != "Darwin" ]; then
+        install_puppet
+        cd puppet/code
+        puppet module install puppetlabs-apt --version 9.4.0 --modulepath /opt/puppetlabs/puppet/modules/
+        puppet module install puppetlabs-docker --version 10.0.1 --modulepath /opt/puppetlabs/puppet/modules/
+    fi
+    
     export FACTER_profile=data_prepper
     puppet apply --environmentpath=environments --environment=production environments/production/manifests/site.pp
     print "Data Prepper deployed successfully."
