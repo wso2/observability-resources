@@ -102,8 +102,6 @@ Once the prerequisites are setup, the observability solution can be deployed by 
     - Log in to the OpenSearch dashboard at URL [http://localhost:5601](http://localhost:5601) using the default credentials *(username: admin, password: Observer_123)* 
     - Navigate to *Dashboards* menu.  Click on the *Integration logs dashboard* or *Integration metrics dashboard* to view the required dashboard.
 
-3. Import `<local_folder>/observability-resources/samples/postman/WSO2_Observability.postman_collection.json` to Postman. This contains various requests that cause deployed MI and Ballerina pods to generate logs, tracing data, and metrics data.
-
 #### Deploying samples
 
 1. Download WSO2 Micro Integrator from [here](https://wso2.com/integrator/micro-integrator/) and copy the zip file to the `<local_folder>/observability-resources/files/` folder.
@@ -117,6 +115,8 @@ sh deploy.sh prepare
 ```
 sh deploy.sh local
 ```
+
+4. Import `<local_folder>/observability-resources/samples/postman/WSO2_Observability.postman_collection.json` to Postman. This contains various requests that cause deployed MI and Ballerina pods to generate logs, tracing data, and metrics data.
 
 ## Sample scenarios
 
