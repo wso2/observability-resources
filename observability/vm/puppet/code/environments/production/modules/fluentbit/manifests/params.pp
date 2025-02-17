@@ -14,7 +14,7 @@ class fluentbit::params inherits o11y_common::params {
   $mi_version = "4.3.0"
   $mi_logs_path = "${deployment_dir}/mi/wso2mi-${mi_version}/repository/logs"
   $mi_app_logs_path = "${mi_logs_path}/wso2carbon.log"
-  $mi_metrics_logs_path = "${mi_logs_path}/metrics.log"
+  $mi_metrics_logs_path = "${mi_logs_path}/synapse-analytics.log"
   $mi_audit_logs_path = "${mi_logs_path}/audit.log"
   $mi_http_logs_path = "${mi_logs_path}/http_access.log"
 

@@ -73,7 +73,7 @@ The following prerequisites are needed for deployments on Mac OS.
 
 - **JDK 17:** Install [Java Development Kit 17](https://jdk.java.net/archive/)
 
-- **Ballerina:** Install the [Ballerina programming laguage](https://ballerina.io/downloads/).
+- **Ballerina:** Install the [Ballerina programming laguage](https://ballerina.io/downloads/) version 2201.10.0.
 
 - **Maven:** [Download](https://maven.apache.org/download.cgi) and [install](https://maven.apache.org/install.html) the Maven build system.
 
@@ -114,7 +114,7 @@ Once the prerequisites are setup, the observability solution can be deployed by 
 
 1. Download WSO2 Micro Integrator from [here](https://wso2.com/integrator/micro-integrator/) and copy the zip file to the `<local_folder>/observability-resources/files/` folder.
 
-2. Navigate to the `<local_folder>/observability-resources/samples/kvm/` folder and execute the following command to build samples and copy binaries to relevant puppet locations:
+2. Navigate to the `<local_folder>/observability-resources/samples/vm/` folder and execute the following command to build samples and copy binaries to relevant puppet locations:
 ```
 sh deploy.sh prepare
 ```

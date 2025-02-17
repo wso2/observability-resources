@@ -63,6 +63,7 @@ if [ "$1" == "local" ]; then
         cd puppet/code
         puppet module install puppetlabs-apt --version 9.4.0 --modulepath /opt/puppetlabs/puppet/modules/
         puppet module install puppetlabs-docker --version 10.0.1 --modulepath /opt/puppetlabs/puppet/modules/
+        cd - > /dev/null
     fi
 
     if [ ! -f "$FILES_DIR"/opensearch-2.*.tar.gz ]; then
@@ -76,6 +77,8 @@ if [ "$1" == "local" ]; then
         wget $OPENSEARCH_DASHBOARDS_DOWNLOAD_URL -P $FILES_DIR
     fi
     cp "$FILES_DIR"/opensearch-dashboards-2.*.tar.gz puppet/code/environments/production/modules/opensearch_dashboards/files/
+
+    cd puppet/code
 
     print "Installing Opensearch..."
     export FACTER_profile=opensearch
@@ -93,6 +96,8 @@ if [ "$1" == "local" ]; then
     export FACTER_profile=data_prepper
     puppet apply --environmentpath=environments --environment=production environments/production/manifests/site.pp
 
+    cd - > /dev/null
+
     echo "Observability solution deployed successfully."
 
 elif [ "$1" == "opensearch" ]; then
@@ -106,6 +111,7 @@ elif [ "$1" == "opensearch" ]; then
         install_puppet
         cd puppet/code
         puppet module install puppetlabs-apt --version 9.4.0 --modulepath /opt/puppetlabs/puppet/modules/
+        cd - > /dev/null
     fi
 
     if [ ! -f "$FILES_DIR"/opensearch-2.*.tar.gz ]; then
@@ -113,9 +119,11 @@ elif [ "$1" == "opensearch" ]; then
     fi
     cp "$FILES_DIR"/opensearch-2.*.tar.gz puppet/code/environments/production/modules/opensearch/files/
 
+    cd puppet/code
     export FACTER_profile=opensearch
     puppet apply --environmentpath=environments --environment=production environments/production/manifests/site.pp
     echo "Opensearch deployed successfully."
+    cd - > /dev/null
 
 elif [ "$1" == "opensearch-dashboards" ]; then
 
@@ -123,6 +131,7 @@ elif [ "$1" == "opensearch-dashboards" ]; then
         install_puppet
         cd puppet/code
         puppet module install puppetlabs-apt --version 9.4.0 --modulepath /opt/puppetlabs/puppet/modules/
+        cd - > /dev/null
     fi
 
     if [ ! -f "$FILES_DIR"/opensearch-dashboards-2.*.tar.gz ]; then
@@ -130,9 +139,11 @@ elif [ "$1" == "opensearch-dashboards" ]; then
     fi
     cp "$FILES_DIR"/opensearch_dashboards-2.*.tar.gz puppet/code/environments/production/modules/opensearch_dashboards/files/
 
+    cd puppet/code
     export FACTER_profile=opensearch_dashboards
     puppet apply --environmentpath=environments --environment=production environments/production/manifests/site.pp
     echo "Opensearch Dashboards deployed successfully."
+    cd - > /dev/null
 
 elif [ "$1" == "fluentbit" ]; then
 
@@ -140,11 +151,14 @@ elif [ "$1" == "fluentbit" ]; then
         install_puppet
         cd puppet/code
         puppet module install puppetlabs-apt --version 9.4.0 --modulepath /opt/puppetlabs/puppet/modules/
+        cd - > /dev/null
     fi
     
+    cd puppet/code
     export FACTER_profile=fluentbit
     puppet apply --environmentpath=environments --environment=production environments/production/manifests/site.pp
     echo "Fluent Bit deployed successfully."
+    cd - > /dev/null
     
 elif [ "$1" == "data-prepper" ]; then
 
@@ -153,11 +167,14 @@ elif [ "$1" == "data-prepper" ]; then
         cd puppet/code
         puppet module install puppetlabs-apt --version 9.4.0 --modulepath /opt/puppetlabs/puppet/modules/
         puppet module install puppetlabs-docker --version 10.0.1 --modulepath /opt/puppetlabs/puppet/modules/
+        cd - > /dev/null
     fi
     
+    cd puppet/code
     export FACTER_profile=data_prepper
     puppet apply --environmentpath=environments --environment=production environments/production/manifests/site.pp
     print "Data Prepper deployed successfully."
+    cd - > /dev/null
         
 else
     print "Invalid option. Please refer the usage."

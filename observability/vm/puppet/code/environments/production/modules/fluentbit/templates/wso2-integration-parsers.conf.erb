@@ -15,6 +15,20 @@
     Types       response_time:integer
 
 [PARSER]
+    Name        wso2mi_analytics_parser
+    Format      regex
+    Regex       ^\[(?<time>[^\]]+)\]\s+\[(?<context>[^\]]*)\]\s+\[(?<thread>[^\]]*)\]\s+(?<level>\S+)\s+(?<component>\S+)\s+(?<key>\S+)\s+(?<log_payload>.*)$
+    Time_Key    time
+    Time_Keep   On
+    Time_Format %Y-%m-%dT%H:%M:%S.%L%z
+
+[PARSER]
+    Name        jsonparser
+    Format      json
+    Time_Key    time
+    Time_Keep   On
+
+[PARSER]
     Name        wso2mi_carbon_parser
     Format      regex
     Regex       ^\[(?<time>[^\]]+)\]\s+(?<level>[A-Z]+)\s+\{(?<module>[^}]+)\}\s*(?:\[\s*Deployed From Artifact Container:\s+(?<package>[^\]]+)\s*\]\s*)?\s*(?:-\s+\{api:(?<integration>[^}]+)\})?\s*(?<message>(.|\n)+)
