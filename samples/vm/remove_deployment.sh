@@ -120,7 +120,7 @@ for PORT in "${PORTS[@]}"; do
     kill_process_on_port "$PORT"
 done
 
-kill_fluent_bit
+#kill_fluent_bit
 
 # Delete specified directories
 for SUBDIR in "${SUBDIRS[@]}"; do

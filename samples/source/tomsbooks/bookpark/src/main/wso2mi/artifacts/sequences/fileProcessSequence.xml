@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence name="fileProcessSequence" xmlns="http://ws.apache.org/ns/synapse">
+    <log level="custom">
+        <property name="status" value="File processing started"/>
+    </log>
+    <log level="custom">
+        <property name="status" value="File processing completed"/>
+    </log>
+</sequence>
