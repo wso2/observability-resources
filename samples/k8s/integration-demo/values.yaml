@@ -2,6 +2,8 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+localDataFolder: /Users/chathura/data
+
 replicaCount: 1
 
 image:

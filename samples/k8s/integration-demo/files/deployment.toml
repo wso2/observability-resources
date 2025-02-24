@@ -2,6 +2,23 @@
 hostname = "localhost"
 # offset  = 10
 
+[mediation]
+flow.statistics.enable=true
+flow.statistics.capture_all=true
+stat.tracer.collect_mediation_properties= true
+# stat.tracer.collect_payloads= true
+
+[analytics]
+enabled = true
+publisher = "log"
+id = "wso2mi_server_1234"
+prefix = "SYNAPSE_ANALYTICS_DATA"
+api_analytics.enabled = true
+proxy_service_analytics.enabled = true
+sequence_analytics.enabled = true
+endpoint_analytics.enabled = true
+inbound_endpoint_analytics.enabled = true
+
 [user_store]
 type = "read_only_ldap"
 
@@ -17,11 +34,6 @@ password = "wso2carbon"
 alias = "symmetric.key.value"
 algorithm = "AES"
 
-[mediation]
-flow.statistics.capture_all= true
-stat.tracer.collect_payloads= true
-stat.tracer.collect_mediation_properties= true
-
 [opentelemetry]
 enable = true
 logs = true
@@ -31,11 +43,6 @@ url = "http://data-prepper.observability.svc.cluster.local:4317"
 [[opentelemetry.properties]]
 name = "api-key"
 value = "somekey" 
-
-# Engage the metrics logger handler. (This is a temporary solution))
-[[synapse_handlers]]
-name = "MetricsLogger"
-class = "com.wso2.metrics.MetricsLogger"
 
 ## Following are set of example configs. Please refer docs for complete set of configurations.
 

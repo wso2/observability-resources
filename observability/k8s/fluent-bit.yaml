@@ -50,6 +50,47 @@ luaScripts:
             return 1, timestamp, record
         end
 
+    extract_metrics_data.lua: |
+        function extract_metrics_data(tag, timestamp, record)
+            local transport = "Unknown"
+            local integration = "Unknown"
+            local sublevel = ""
+            local method = ""
+            local response_time = 0
+            local status = "successful"
+
+            if record["payload"] then
+                local payload = record["payload"]
+                response_time = payload["latency"]
+                if payload["failure"] == "true" then
+                    status = "failed"
+                end
+
+                if payload["apiDetails"] then
+                    integration = payload["apiDetails"]["api"]
+                    sublevel = payload["apiDetails"]["subRequestPath"]
+                    method = payload["apiDetails"]["method"]
+                    transport = payload["apiDetails"]["transport"]
+                elseif payload["inboundEndpointDetails"] then
+                    local details = payload["inboundEndpointDetails"]
+                    integration = details["name"]
+                    transport = details["protocol"]
+                else
+                    record["log_status"] = "discarded"
+                end
+            end
+
+            record["payload"] = ""
+            record["response_time"] = response_time
+            record["status"] = status
+            record["protocol"] = transport
+            record["integration"] = integration
+            record["sublevel"] = sublevel
+            record["method"] = method
+            
+            return 1, timestamp, record
+        end
+
 config:
     customParsers: |
         [PARSER]
@@ -72,6 +113,12 @@ config:
             Types       response_time:integer
 
         [PARSER]
+            Name        jsonparser
+            Format      json
+            Time_Key    time
+            Time_Keep   On
+
+        [PARSER]
             Name   wso2apim_carbon_parser
             Format regex
             Regex  ^(?<log_type>[A-Z]+) \[(?<time>[0-9-]{10} [0-9:,]{12})\]\s+(?<level>[A-Z]+)\s+\{(?<module>[^}]+)\}\s*(?:\[\s*Deployed From Artifact Container:\s+(?<package>[^\]]+)\s*\]\s*)?\s*(?:-\s+\{api:(?<api>[^}]+)\})?\s*(?<message>(.|\n)+)
@@ -84,6 +131,14 @@ config:
             flush_timeout 1000
             rule          "start_state"   "^CARBON.*"   "cont"
             rule          "cont"          "^(?!CARBON|CREL|AUDIT|HTTP|TRACE|METRIC).*" "cont"
+
+        [PARSER]
+            Name        wso2mi_analytics_parser
+            Format      regex
+            Regex       ^METRIC \[(?<time>[^\]]+)\]\s+\[(?<context>[^\]]*)\]\s+\[(?<thread>[^\]]*)\]\s+(?<level>\S+)\s+(?<component>\S+)\s+(?<key>\S+)\s+(?<log_payload>.*)$
+            Time_Key    time
+            Time_Keep   On
+            Time_Format %Y-%m-%dT%H:%M:%S.%L%z
 
     inputs: |
         [INPUT]
@@ -170,6 +225,38 @@ config:
             Match wso2_mi_logs
             Rule $log ^METRIC wso2_mi_metrics_logs false
             Emitter_Name re_emitted_mi_metrics
+
+        [FILTER]
+            Name parser
+            Match wso2_mi_metrics_logs
+            Key_Name log
+            Parser wso2mi_analytics_parser
+            Reserve_Data False
+            Preserve_Key False
+
+        [FILTER]
+            Name parser
+            Match wso2_mi_metrics_logs
+            Key_Name log_payload
+            Parser jsonparser
+            Reserve_Data True
+            Preserve_Key False
+
+        [FILTER]
+            Name    lua
+            Match   wso2_mi_metrics_logs
+            Script  /fluent-bit/scripts/extract_metrics_data.lua
+            Call    extract_metrics_data
+
+        [FILTER]
+            Name rewrite_tag
+            Match wso2_mi_metrics_logs
+            Rule $log_status discarded discarded false
+            Emitter_Name re_emitted_mi_discardable
+
+        [OUTPUT]
+            Name null
+            Match discarded
 
         [FILTER]
             Name parser
