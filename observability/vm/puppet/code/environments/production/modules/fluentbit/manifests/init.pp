@@ -43,7 +43,7 @@ class fluentbit inherits fluentbit::params {
       command     => 'brew install fluent-bit',
       path        => $path,
       environment => ["HOME=${darwin_home}"],
-      unless      => 'fluent-bit --version | grep "Fluent Bit"',
+      unless      => 'which fluent-bit',
     }
   }
 

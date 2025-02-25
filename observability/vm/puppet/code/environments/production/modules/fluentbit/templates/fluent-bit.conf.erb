@@ -106,6 +106,38 @@
     Name parser
     Match wso2_mi_metrics_logs
     Key_Name log
+    Parser wso2mi_analytics_parser
+    Reserve_Data False
+    Preserve_Key False
+
+[FILTER]
+    Name parser
+    Match wso2_mi_metrics_logs
+    Key_Name log_payload
+    Parser jsonparser
+    Reserve_Data True
+    Preserve_Key False
+
+[FILTER]
+    Name    lua
+    Match   wso2_mi_metrics_logs
+    Script  scripts.lua
+    Call    extract_metrics_data
+
+[FILTER]
+    Name rewrite_tag
+    Match wso2_mi_metrics_logs
+    Rule $log_status discarded discarded false
+    Emitter_Name re_emitted_mi_discardable
+
+[OUTPUT]
+    Name null
+    Match discarded
+
+[FILTER]
+    Name parser
+    Match dep_wso2_mi_metrics_logs
+    Key_Name log
     Parser wso2mi_metrics_parser
     Reserve_Data True
     Preserve_Key True

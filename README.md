@@ -9,7 +9,7 @@ WSO2 observability solution provides monitoring and analytics capabilities for W
 #### Prerequisites
 
 - **Kubernetes:**
- For trying out the solution, it is possible to set up a Kubernetes cluster locally using the [Rancher Desktop](https://docs.rancherdesktop.io/getting-started/installation) or the [Docker Desktop](https://www.docker.com/get-started/). Alternatively, any on-premise or cloud-based Kubernetes cluster such as [Azure Kubernetes Service (AKS)](https://azure.microsoft.com/en-us/products/kubernetes-service) or [Amazon Elastic Kubernetes Service (EKS)](https://aws.amazon.com/eks/) can be used.
+ For trying out the solution, it is possible to set up a Kubernetes cluster locally using the [Rancher Desktop](https://docs.rancherdesktop.io/getting-started/installation) or the [Docker Desktop](https://www.docker.com/get-started/). Alternatively, any on-premise or cloud-based Kubernetes cluster such as [Azure Kubernetes Service (AKS)](https://azure.microsoft.com/en-us/products/kubernetes-service) or [Amazon Elastic Kubernetes Service (EKS)](https://aws.amazon.com/eks/) can be used. A Kubernetes cluster with at least 8 vCPUs and 12 GB memory is recommended for the observability solution.
 
 - **Helm:**
 Rancher Desktop has Helm built-in. If not, install [Helm](https://helm.sh/docs/intro/install/)
@@ -62,12 +62,22 @@ The following prerequisites are needed for deployments on Mac OS.
 >The provided deployment script will check and install missing prerequisites automatically on Debian-based environments.
 
 - **Puppet:** [Puppet](https://www.puppet.com/docs/puppet/8/install_agents#install_agents) is used as the deployment automation system for VM-based deployments.
+    - Install the puppetlabs-apt module via
+        ```
+        puppet module install puppetlabs-apt --version 9.4.0 --modulepath /opt/puppetlabs/puppet/modules/
+        ```
+    - Install the puppetlabs-docker module via
+        ```
+        puppet module install puppetlabs-docker --version 10.0.1 --modulepath /opt/puppetlabs/puppet/modules/
+        ```
 
 - **JDK 17:** Install [Java Development Kit 17](https://jdk.java.net/archive/)
 
-- **Ballerina:** Install the [Ballerina programming laguage](https://ballerina.io/downloads/).
+- **Ballerina:** Install the [Ballerina programming laguage](https://ballerina.io/downloads/) version 2201.10.0.
 
 - **Maven:** [Download](https://maven.apache.org/download.cgi) and [install](https://maven.apache.org/install.html) the Maven build system.
+
+- **wget:** Install wget using the relevant package manager. E.g. for Mac OS: `brew install wget`
 
 - **Postman:** Download and install the [Postman](https://www.postman.com/downloads/) client for invoking sample APIs. 
 
@@ -78,9 +88,15 @@ Once the prerequisites are setup, the observability solution can be deployed by 
 1. Clone [this](https://github.com/wso2/observability-resources) repository to a local folder.
 
 2. Navigate to the `<local_folder>/observability-resources/observability/vm/` folder and execute the installation script using the following command.
-```
-sh deploy.sh local
-```
+
+ - Mac OS
+    ```
+    sh deploy.sh local
+    ```
+ - Linux (Observability components will be installed as services in Linux. Therefore, `sudo` access is required.)
+    ```
+    sudo -E sh deploy.sh local
+    ```
 
     Local deployment deploys all components of the observability solution in a single VM. For production deployments, it is recommended to deploy each component in a separate VM by executing deploy.sh followed by the component name as follows:
         - Install OpenSearch: `sh deploy.sh opensearch`
@@ -94,13 +110,11 @@ sh deploy.sh local
     - Log in to the OpenSearch dashboard at URL [http://localhost:5601](http://localhost:5601) using the default credentials *(username: admin, password: Observer_123)* 
     - Navigate to *Dashboards* menu.  Click on the *Integration logs dashboard* or *Integration metrics dashboard* to view the required dashboard.
 
-3. Import `<local_folder>/observability-resources/samples/postman/WSO2_Observability.postman_collection.json` to Postman. This contains various requests that cause deployed MI and Ballerina pods to generate logs, tracing data, and metrics data.
-
 #### Deploying samples
 
 1. Download WSO2 Micro Integrator from [here](https://wso2.com/integrator/micro-integrator/) and copy the zip file to the `<local_folder>/observability-resources/files/` folder.
 
-2. Navigate to the `<local_folder>/observability-resources/samples/kvm/` folder and execute the following command to build samples and copy binaries to relevant puppet locations:
+2. Navigate to the `<local_folder>/observability-resources/samples/vm/` folder and execute the following command to build samples and copy binaries to relevant puppet locations:
 ```
 sh deploy.sh prepare
 ```
@@ -109,6 +123,8 @@ sh deploy.sh prepare
 ```
 sh deploy.sh local
 ```
+
+4. Import `<local_folder>/observability-resources/samples/postman/WSO2_Observability.postman_collection.json` to Postman. This contains various requests that cause deployed MI and Ballerina pods to generate logs, tracing data, and metrics data.
 
 ## Sample scenarios
 

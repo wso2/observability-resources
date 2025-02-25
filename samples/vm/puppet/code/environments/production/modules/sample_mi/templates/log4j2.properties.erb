@@ -37,7 +37,7 @@
 
 # list of all appenders
 #add entry "syslog" to use the syslog appender
-appenders = CARBON_CONSOLE, CARBON_LOGFILE, METRICS_CONSOLE, METRICS_LOGFILE, AUDIT_LOGFILE, AUDIT_CONSOLE, ATOMIKOS_LOGFILE, ATOMIKOS_CONSOLE, CARBON_TRACE_LOGFILE, CARBON_TRACE_CONSOLE, osgi, SERVICE_LOGFILE, SERVICE_CONSOLE, API_LOGFILE, API_CONSOLE, ERROR_LOGFILE, ERROR_CONSOLE, CORRELATION, CORRELATION_CONSOLE, OPEN_TELEMETRY, HTTP_ACCESS_LOGFILE, HTTP_ACCESS_CONSOLE
+appenders = CARBON_CONSOLE, CARBON_LOGFILE, METRICS_CONSOLE, MI_ANALYTICS_LOGFILE, AUDIT_LOGFILE, AUDIT_CONSOLE, ATOMIKOS_LOGFILE, ATOMIKOS_CONSOLE, CARBON_TRACE_LOGFILE, CARBON_TRACE_CONSOLE, osgi, SERVICE_LOGFILE, SERVICE_CONSOLE, API_LOGFILE, API_CONSOLE, ERROR_LOGFILE, ERROR_CONSOLE, CORRELATION, CORRELATION_CONSOLE, OPEN_TELEMETRY, HTTP_ACCESS_LOGFILE, HTTP_ACCESS_CONSOLE
 #, syslog
 
 # CARBON_CONSOLE is set to be a ConsoleAppender using a PatternLayout.
@@ -75,22 +75,20 @@ appender.METRICS_CONSOLE.filter.threshold.type = ThresholdFilter
 appender.METRICS_CONSOLE.filter.threshold.level = INFO
 
 # METRICS_LOGFILE is set to be a DailyRollingFileAppender using a PatternLayout.
-appender.METRICS_LOGFILE.type = RollingFile
-appender.METRICS_LOGFILE.name = METRICS_LOGFILE
-appender.METRICS_LOGFILE.fileName = ${sys:logfiles.home}/metrics.log
-appender.METRICS_LOGFILE.filePattern = ${sys:logfiles.home}/wso2carbon-%d{MM-dd-yyyy}.log
-appender.METRICS_LOGFILE.layout.type = PatternLayout
-appender.METRICS_LOGFILE.layout.pattern = [%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}] %5p {%c} %X{Artifact-Container} - %m%ex%n
-appender.METRICS_LOGFILE.policies.type = Policies
-appender.METRICS_LOGFILE.policies.time.type = TimeBasedTriggeringPolicy
-appender.METRICS_LOGFILE.policies.time.interval = 1
-appender.METRICS_LOGFILE.policies.time.modulate = true
-appender.METRICS_LOGFILE.policies.size.type = SizeBasedTriggeringPolicy
-appender.METRICS_LOGFILE.policies.size.size=10MB
-appender.METRICS_LOGFILE.strategy.type = DefaultRolloverStrategy
-appender.METRICS_LOGFILE.strategy.max = 20
-appender.METRICS_LOGFILE.filter.threshold.type = ThresholdFilter
-appender.METRICS_LOGFILE.filter.threshold.level = DEBUG
+appender.MI_ANALYTICS_LOGFILE.type = RollingFile
+appender.MI_ANALYTICS_LOGFILE.name = MI_ANALYTICS_LOGFILE
+appender.MI_ANALYTICS_LOGFILE.fileName = ${sys:carbon.home}/repository/logs/synapse-analytics.log
+appender.MI_ANALYTICS_LOGFILE.filePattern = ${sys:carbon.home}/repository/logs/synapse-analytics-%d{MM-dd-yyyy}-%i.log
+appender.MI_ANALYTICS_LOGFILE.layout.type = PatternLayout
+appender.MI_ANALYTICS_LOGFILE.layout.pattern = [%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}] [%X{ip}-%X{host}] [%t] %5p %c{1} %m%n
+appender.MI_ANALYTICS_LOGFILE.policies.type = Policies
+appender.MI_ANALYTICS_LOGFILE.policies.time.type = TimeBasedTriggeringPolicy
+appender.MI_ANALYTICS_LOGFILE.policies.time.interval = 1
+appender.MI_ANALYTICS_LOGFILE.policies.time.modulate = true
+appender.MI_ANALYTICS_LOGFILE.policies.size.type = SizeBasedTriggeringPolicy
+appender.MI_ANALYTICS_LOGFILE.policies.size.size=1000MB
+appender.MI_ANALYTICS_LOGFILE.strategy.type = DefaultRolloverStrategy
+appender.MI_ANALYTICS_LOGFILE.strategy.max = 10
 
 # Appender config to AUDIT_LOGFILE
 appender.AUDIT_LOGFILE.type = RollingFile
@@ -313,7 +311,7 @@ appender.HTTP_ACCESS_CONSOLE.filter.threshold.level = DEBUG
 #appender.syslog.filter.threshold.type = ThresholdFilter
 #appender.syslog.filter.threshold.level = DEBUG
 
-loggers = AUDIT_LOG, METRICS_LOGGER, SERVICE_LOGGER, API_LOGGER, PassThroughAccess, trace-messages, org-apache-coyote, com-hazelcast, Owasp-CsrfGuard, \
+loggers = AUDIT_LOG, ANALYTICS_LOGGER, SERVICE_LOGGER, API_LOGGER, PassThroughAccess, trace-messages, org-apache-coyote, com-hazelcast, Owasp-CsrfGuard, \
 	  org-apache-axis2-wsdl-codegen-writer-PrettyPrinter, org-apache-axis2-clustering, org-apache-catalina, \
 	  org-apache-tomcat, org-wso2-carbon-apacheds, org-apache-directory-server-ldap, \
 	  org-apache-directory-server-core-event, com-atomikos, org-quartz, org-apache-jackrabbit-webdav, org-apache-juddi, \
@@ -403,11 +401,10 @@ logger.SynapseConfigurationBuilder.level = WARN
 logger.BlueprintExtender.name = org.apache.aries.blueprint.container.BlueprintExtender
 logger.BlueprintExtender.level = WARN
 
-logger.METRICS_LOGGER.name = METRICS_LOGGER
-logger.METRICS_LOGGER.level = INFO
-logger.METRICS_LOGGER.appenderRef.METRICS_CONSOLE.ref = METRICS_CONSOLE
-logger.METRICS_LOGGER.appenderRef.METRICS_LOGFILE.ref = METRICS_LOGFILE
-logger.METRICS_LOGGER.additivity = false
+logger.ANALYTICS_LOGGER.name = org.wso2.micro.integrator.analytics.messageflow.data.publisher.publish.elasticsearch.ElasticStatisticsPublisher
+logger.ANALYTICS_LOGGER.level = DEBUG
+logger.ANALYTICS_LOGGER.additivity = false
+logger.ANALYTICS_LOGGER.appenderRef.MI_ANALYTICS_LOGFILE.ref = MI_ANALYTICS_LOGFILE
 
 logger.AUDIT_LOG.name = AUDIT_LOG
 logger.AUDIT_LOG.level = INFO

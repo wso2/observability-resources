@@ -17,6 +17,30 @@ if $os == "Debian" {
     mode   => '0755',
   }
 
+  file { 'creae_data_files_dir':
+    path   => "${deployment_dir}/mi/dataFiles",
+    ensure => directory,
+    owner  => $deploy_user,
+    group  => $deploy_group,
+    mode   => '0755',
+  }
+
+  file { 'creae_data_files_input_dir':
+    path   => "${deployment_dir}/mi/dataFiles/input",
+    ensure => directory,
+    owner  => $deploy_user,
+    group  => $deploy_group,
+    mode   => '0755',
+  }
+
+  file { 'creae_data_files_processed_dir':
+    path   => "${deployment_dir}/mi/dataFiles/completed",
+    ensure => directory,
+    owner  => $deploy_user,
+    group  => $deploy_group,
+    mode   => '0755',
+  }
+
   file { 'get_mi_zip':
     path    => "${deployment_dir}/mi/wso2mi-${mi_version}.zip",
     ensure  => file,
@@ -54,6 +78,14 @@ if $os == "Debian" {
   file { "${mi_dir}/conf/deployment.toml":
     ensure  => file,
     content => template('sample_mi/deployment.toml.erb'),
+    owner   => $deploy_user,
+    group   => $deploy_group,
+    mode    => '0644',
+  }
+
+  file { "${mi_dir}/conf/file.properties":
+    ensure  => file,
+    content => template('sample_mi/file.properties.erb'),
     owner   => $deploy_user,
     group   => $deploy_group,
     mode    => '0644',

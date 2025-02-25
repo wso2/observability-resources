@@ -53,14 +53,14 @@ build_mi_project() {
     fi
 
     # Copy the metrics logging handler to the MI image. (This is a temporary workaround)
-    cd - > /dev/null
-    cd ../source/extensions/metrics-handler/source || exit
-    mvn clean package
-    cd - > /dev/null
-    cp ../source/extensions/metrics-handler/source/target/mimetrics-1.0.0.jar ../source/extensions/metrics-handler/docker
-    cd ../source/extensions/metrics-handler/docker || exit
-    export DOCKER_DEFAULT_PLATFORM=linux/amd64
-    docker build -t bookpark-m:1.0.3 .
+    # cd - > /dev/null
+    # cd ../source/extensions/metrics-handler/source || exit
+    # mvn clean package
+    # cd - > /dev/null
+    # cp ../source/extensions/metrics-handler/source/target/mimetrics-1.0.0.jar ../source/extensions/metrics-handler/docker
+    # cd ../source/extensions/metrics-handler/docker || exit
+    # export DOCKER_DEFAULT_PLATFORM=linux/amd64
+    # docker build -t bookpark-m:1.0.3 .
     
     # Navigate back to the initial directory
     cd - > /dev/null
