@@ -407,3 +407,107 @@ appender.CARBON_LOGFILE.layout.pattern = [%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}] %5p 
 ```
 $mi_logs_path = "/opt/mi/wso2mi-4.4.0/repository/logs"
 ```
+
+## Container-based environments
+
+1. Add the below analytics logging configuration to the `<mi-home>/conf/deployment.toml` file.
+```
+[mediation]
+flow.statistics.enable=true
+flow.statistics.capture_all=true
+
+[analytics]
+enabled = true
+publisher = "log"
+id = "wso2mi_server_1234"
+prefix = "SYNAPSE_ANALYTICS_DATA"
+api_analytics.enabled = true
+proxy_service_analytics.enabled = true
+sequence_analytics.enabled = true
+endpoint_analytics.enabled = true
+inbound_endpoint_analytics.enabled = true
+
+[opentelemetry]
+enable = true
+logs = true
+type = "otlp"
+url = "http://data_prepper_host:4317"
+```
+
+2. Add or update the below appenders in the `<mi-home>/conf/log4j2.properties` file.
+
+- Application log appender
+> Note that the date format is changed to be compatible with Open Search.
+```
+appender.CARBON_CONSOLE.type = Console
+appender.CARBON_CONSOLE.name = CARBON_CONSOLE
+appender.CARBON_CONSOLE.layout.type = PatternLayout
+appender.CARBON_CONSOLE.layout.pattern = CARBON [%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}] %5p {%c{1}} %X{Artifact-Container} - %m %ex %n
+appender.CARBON_CONSOLE.filter.threshold.type = ThresholdFilter
+appender.CARBON_CONSOLE.filter.threshold.level = DEBUG
+```
+
+- Metrics log appender
+```
+appender.MI_ANALYTICS_CONSOLE.type = Console
+appender.MI_ANALYTICS_CONSOLE.name = MI_ANALYTICS_CONSOLE
+appender.MI_ANALYTICS_CONSOLE.layout.type = PatternLayout
+appender.MI_ANALYTICS_CONSOLE.layout.pattern = METRIC [%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}] [%X{ip}-%X{host}] [%t] %5p %c{1} %m%n
+appender.MI_ANALYTICS_CONSOLE.filter.threshold.type = ThresholdFilter
+appender.MI_ANALYTICS_CONSOLE.filter.threshold.level = INFO
+```
+
+- Audit log appender
+```
+appender.AUDIT_CONSOLE.type = Console
+appender.AUDIT_CONSOLE.name = AUDIT_CONSOLE
+appender.AUDIT_CONSOLE.layout.type = PatternLayout
+appender.AUDIT_CONSOLE.layout.pattern = AUDIT [%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}] %5p {%c} - %m%ex%n
+appender.AUDIT_CONSOLE.filter.threshold.type = ThresholdFilter
+appender.AUDIT_CONSOLE.filter.threshold.level = DEBUG
+```
+
+- Correlation log appender
+```
+appender.CORRELATION_CONSOLE.type = Console
+appender.CORRELATION_CONSOLE.name = CORRELATION_CONSOLE
+appender.CORRELATION_CONSOLE.layout.type = PatternLayout
+appender.CORRELATION_CONSOLE.layout.pattern = CREL %d{yyyy-MM-dd HH:mm:ss,SSS}|%X{Correlation-ID}|%t|%m%n
+appender.CORRELATION_CONSOLE.filter.threshold.type = ThresholdFilter
+appender.CORRELATION_CONSOLE.filter.threshold.level = INFO
+```
+
+Update the appenders section to include new appenders:
+```
+appenders = CARBON_CONSOLE, MI_ANALYTICS_CONSOLE, AUDIT_CONSOLE, SERVICE_CONSOLE, ...
+```
+
+3. Add or update the following loggers to include corresponding consolde appenders (Note that the CARBON_CONSOLE appender is already included in the root logger).
+
+- Metrics logger
+```
+logger.ANALYTICS_LOGGER.name = org.wso2.micro.integrator.analytics.messageflow.data.publisher.publish.elasticsearch.ElasticStatisticsPublisher
+logger.ANALYTICS_LOGGER.level = DEBUG
+logger.ANALYTICS_LOGGER.additivity = false
+logger.ANALYTICS_LOGGER.appenderRef.MI_ANALYTICS_CONSOLE.ref = MI_ANALYTICS_CONSOLE
+```
+
+- Audit logger
+```
+logger.AUDIT_LOG.name = AUDIT_LOG
+logger.AUDIT_LOG.level = INFO
+logger.AUDIT_LOG.appenderRef.AUDIT_LOGFILE.ref = AUDIT_LOGFILE
+logger.AUDIT_LOG.appenderRef.AUDIT_CONSOLE.ref = AUDIT_CONSOLE
+logger.AUDIT_LOG.additivity = false
+```
+
+- Correlation logger
+```
+logger.correlation.name = correlation
+logger.correlation.level = INFO
+logger.correlation.appenderRef.CORRELATION.ref = CORRELATION
+logger.correlation.appenderRef.CORRELATION_CONSOLE.ref = CORRELATION_CONSOLE
+logger.correlation.additivity = false
+```
+
+
