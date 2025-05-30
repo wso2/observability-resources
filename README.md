@@ -183,7 +183,7 @@ After invoking few Postman requests, observability data related to those invocat
 
 ## VM-based environments
 
-1. Create a `Config.toml` file the below content and set a environment variable named `BAL_CONFIG_FILES` to point to the `Config.toml` file path.
+1. Create a `Config.toml` file with the below content and set a environment variable named `BAL_CONFIG_FILES` to point to the `Config.toml` file path.
 ```
 [ballerina.observe]
 tracingEnabled=true
@@ -231,7 +231,7 @@ samplerParam=1.0
 reporterFlushInterval=2000
 reporterBufferSize=1000
 ```
-Final Kubernetes deployment file for Ballerina program would look like the below (`files/shipments-config.toml` is the toml file created in step 2):
+Once updated, Kubernetes deployment file for Ballerina program would look like the below (`files/shipments-config.toml` is the toml file created in step 2):
 ```
 ---
 apiVersion: "v1"
@@ -332,6 +332,8 @@ data:
 
 # Publishing MI observability data to the observability solution
 
+## VM-based environments
+
 > **Note:** If no other changes have been made to the log4j.properties file, it is possible to replace the log4j2.properties file with `<base-dir>/observability-resources/samples/vm/puppet/code/environments/production/modules/sample_mi/templates/log4j2.properties.erb` and rename it to log4j2.properties.
 
 1. Add the below analytics logging configuration to the `<mi-home>/conf/deployment.toml` file.
@@ -400,9 +402,7 @@ loggers = AUDIT_LOG, ANALYTICS_LOGGER, SERVICE_LOGGER, API_LOGGER, PassThroughAc
 appender.CARBON_LOGFILE.layout.pattern = [%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}] %5p {%c{1}} %X{Artifact-Container} - %m %ex %n
 ```
 
-loggers = AUDIT_LOG, ANALYTICS_LOGGER, SERVICE_LOGGER, API_LOGGER, PassThroughAccess,
-
-4. Add the following configuration to the fluentbit config file (<base-dir>/observability-resources/observability/vm/puppet/code/environments/production/modules/fluentbit/templates/fluent-bit.conf.erb) to point to the MI logs path.
+4. Update the `mi_logs_path` feild in `<base-dir>/observability-resources/observability/vm/puppet/code/environments/production/modules/fluentbit/manifests/params.pp` to point to the MI logs path.
 
 ```
 $mi_logs_path = "/opt/mi/wso2mi-4.4.0/repository/logs"
