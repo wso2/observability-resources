@@ -31,7 +31,7 @@ spec:
           roles:
               - "master"
         - component: data
-          replicas: 2
+          replicas: 1
           diskSize: "5Gi"
           resources:
               requests:
