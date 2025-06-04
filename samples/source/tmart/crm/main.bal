@@ -1,5 +1,6 @@
 import ballerina/http;
 import ballerina/log;
+import ballerinax/metrics.logs as _;
 import ballerinax/jaeger as _;
 
 map<string> customersMap = {

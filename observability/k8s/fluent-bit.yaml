@@ -50,6 +50,31 @@ luaScripts:
             return 1, timestamp, record
         end
 
+    extract_bal_metrics_data.lua: |
+        function extract_bal_metrics_data(tag, timestamp, record)
+            local transport = record["protocol"] or "Unknown"
+            local integration = record["src.object.name"] or "Unknown"
+            local sublevel = record["entrypoint.function.name"] or ""
+            local method = record["http.method"] or ""
+            local response_time = record["response_time_seconds"] or 0
+            local status = "failed"
+            if record["http.status_code_group"] == "2xx" then
+                status = "successful"
+            end
+
+            response_time = response_time * 1000
+            response_time = math.floor(response_time)
+
+            record["response_time"] = response_time
+            record["status"] = status
+            record["protocol"] = transport
+            record["integration"] = integration
+            record["sublevel"] = sublevel
+            record["method"] = method
+
+            return 1, timestamp, record
+        end
+
     extract_metrics_data.lua: |
         function extract_metrics_data(tag, timestamp, record)
             local transport = "Unknown"
@@ -96,6 +121,7 @@ config:
         [PARSER]
             Name        bal_parser
             Format      logfmt
+            Types       response_time_seconds:float
 
         [PARSER]
             Name        wso2mi_carbon_parser
@@ -363,6 +389,18 @@ config:
             script /fluent-bit/scripts/construct_bal_app_name.lua
             call construct_bal_app_name
 
+        [FILTER]
+            Name rewrite_tag
+            Match wso2_bal_logs
+            Rule $logger metrics wso2_bal_metrics_logs false
+            Emitter_Name re_emitted_wso2_bal_metrics
+
+        [FILTER]
+            Name   lua
+            Match  wso2_bal_metrics_logs
+            Script /fluent-bit/scripts/extract_bal_metrics_data.lua
+            Call   extract_bal_metrics_data
+
     outputs: |
         [OUTPUT]
             Name opensearch
@@ -389,6 +427,22 @@ config:
             Logstash_DateFormat %Y-%m-%d
             Logstash_Prefix wso2-integration-metrics-logs
             Match wso2_mi_metrics_logs
+            Port 9200
+            Replace_Dots On
+            Suppress_Type_Name On
+            tls On
+            tls.verify Off
+            Trace_Error On
+
+        [OUTPUT]
+            Name opensearch
+            Host opensearch-data
+            HTTP_Passwd admin
+            HTTP_User admin
+            Logstash_Format On
+            Logstash_DateFormat %Y-%m-%d
+            Logstash_Prefix wso2-integration-metrics-logs
+            Match wso2_bal_metrics_logs
             Port 9200
             Replace_Dots On
             Suppress_Type_Name On
