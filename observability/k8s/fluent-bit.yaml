@@ -35,10 +35,15 @@ luaScripts:
                 record["deployment"] = nil
             end
 
+            local moduleName = record["module"]
+            if record["src.module"] then
+                moduleName = record["src.module"]
+            end
+
             if record["deployment"] then
-                record["app"] = record["deployment"] .. " - " .. record["module"]
+                record["app"] = record["deployment"] .. " - " .. moduleName
             else
-                record["app"] = record["module"]
+                record["app"] = moduleName 
             end
             return 1, timestamp, record
         end
@@ -54,12 +59,15 @@ luaScripts:
         function extract_bal_metrics_data(tag, timestamp, record)
             local transport = record["protocol"] or "Unknown"
             local integration = record["src.object.name"] or "Unknown"
+            if record["src.main"] == "true" then
+                integration = "main"
+            end
             local sublevel = record["entrypoint.function.name"] or ""
             local method = record["http.method"] or ""
             local response_time = record["response_time_seconds"] or 0
-            local status = "failed"
-            if record["http.status_code_group"] == "2xx" then
-                status = "successful"
+            local status = "successful"
+            if record["http.status_code_group"] == "4xx" or record["http.status_code_group"] == "5xx" then
+                status = "failed"
             end
 
             response_time = response_time * 1000
