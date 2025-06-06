@@ -1,5 +1,6 @@
 import ballerina/log;
 import ballerina/http;
+import ballerinax/metrics.logs as _;
 import ballerinax/jaeger as _;
 
 type Allocation record {|
